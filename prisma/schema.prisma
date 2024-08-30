@@ -1,0 +1,264 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                @id @default(auto()) @map("_id") @db.ObjectId
+  name                String?
+  email               String?               @unique
+  emailVerified       DateTime?
+  image               String?
+  password            String?
+  accounts            Account[]
+  sessions            Session[]
+  // Optional for WebAuthn support
+  Authenticator       Authenticator[]
+  phone               String?               @unique
+  isActive            Boolean               @default(true)
+  isReported          Boolean               @default(false)
+  isBlocked           Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  BlockList           BlockList[]
+  Participant         Participant[]
+  UserConversation    Conversation[]        @relation("UserConversation")
+  AdminConversation   Conversation[]        @relation("AdminConversation")
+  UserMessage         Message[]             @relation("UserMessage")
+  SenderMessage       Message[]             @relation("SenderMessage")
+  Message             Message[]
+  Conversation        Conversation[]
+  Report              Report[]
+  Activity            Activity[]
+  DeletedConversation DeletedConversation[]
+  DeletedMessage      DeletedMessage[]
+  Friends             Friend[]              @relation("CurrentUser")
+  FriendUsers         Friend[]              @relation("FriendUser")
+  Notifications       Notification[]
+}
+
+model Friend {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String       @db.ObjectId
+  friendId    String       @db.ObjectId
+  createdAt   DateTime     @default(now())
+  status      FriendStatus @default(PENDING)
+  updatedAt   DateTime     @updatedAt
+  CurrentUser User         @relation("CurrentUser", fields: [userId], references: [id], onDelete: Cascade)
+  Friend      User         @relation("FriendUser", fields: [friendId], references: [id], onDelete: Cascade)
+}
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Notification {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String           @db.ObjectId
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  User      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationType {
+  REPORT
+  INFO
+  WARNING
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialID])
+}
+
+model BlockList {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String      @db.ObjectId
+  participantId String      @db.ObjectId
+  createdAt     DateTime    @default(now())
+  User          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+}
+
+// Conversations
+model Conversation {
+  id                   String                @id @default(auto()) @map("_id") @db.ObjectId
+  title                String
+  adminId              String?               @db.ObjectId
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  userId               String?               @db.ObjectId
+  UserConversation     User?                 @relation("UserConversation", fields: [userId], references: [id], onDelete: Cascade)
+  AdminConversation    User?                 @relation("AdminConversation", fields: [adminId], references: [id], onDelete: Cascade)
+  Messages             Message[]
+  User                 User?                 @relation(fields: [userId], references: [id])
+  DeletedConversations DeletedConversation[]
+  Participants         Participant[]
+}
+
+// Participants in a conversation
+model Participant {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String       @db.ObjectId
+  userId         String       @db.ObjectId
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  User           User         @relation(fields: [userId], references: [id])
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  Reports        Report[]
+  BlockLists     BlockList[]
+}
+
+// Messages for a conversation
+model Message {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String      @db.ObjectId
+  senderId       String      @db.ObjectId
+  messageType    MessageType
+  content        String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  userId         String?     @db.ObjectId
+
+  Attachments     Attachment[]
+  UserMessage     User?            @relation("UserMessage", fields: [userId], references: [id], onDelete: Cascade)
+  SenderMessage   User             @relation("SenderMessage", fields: [senderId], references: [id], onDelete: Cascade)
+  Conversation    Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  User            User?            @relation(fields: [userId], references: [id])
+  DeletedMessages DeletedMessage[]
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  VIDEO
+}
+
+// Attachments for a message
+model Attachment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  messageId String   @db.ObjectId
+  thumbUrl  String?
+  fileUrl   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+// Store deleted conversations for a user
+model DeletedConversation {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String       @db.ObjectId
+  userId         String       @db.ObjectId
+  createdAt      DateTime     @default(now())
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  User           User         @relation(fields: [userId], references: [id])
+}
+
+// Store deleted messages for a user
+model DeletedMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  messageId String   @db.ObjectId
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  Message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+// Report user
+model Report {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  participantId String       @db.ObjectId
+  reportType    String
+  notes         String?
+  status        ReportStatus
+  createdAt     DateTime     @default(now())
+  userId        String?      @db.ObjectId
+  Participant   Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  User          User?        @relation(fields: [userId], references: [id])
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}
+
+// Users activity log
+model Activity {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  activityType String
+  title        String
+  detail       String?
+  userId       String   @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
