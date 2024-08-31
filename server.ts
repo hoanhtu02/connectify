@@ -3,6 +3,8 @@ import next from "next";
 import { Server } from "socket.io";
 import registerUserHandler from "@/handler/registerUserHandler";
 import { User } from "next-auth";
+import registerInitHandler from "@/handler/registerInitHandler";
+import registerChatHandler from "./handler/registerChatHandler";
 process.on("unhandledRejection", (err) => {
     console.error(err);
     process.exit(1);
@@ -29,8 +31,12 @@ app.prepare().then(async () => {
     io.on("connection", async (socket) => {
         console.log("a user connected");
         socket.join(`notification:room:${socket.user.id}`);
+        await registerInitHandler(io, socket);
         // friend (add, remove, block, unblock)
-        await registerUserHandler(io, socket);
+        registerUserHandler(io, socket);
+
+        // chat 
+        registerChatHandler(io, socket)
         socket.on("error", (error) => {
             console.error(error);
         });

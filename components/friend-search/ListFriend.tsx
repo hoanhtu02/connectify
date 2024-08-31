@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import FriendItem from "@/components/friend-search/FriendItem";
+import FriendResultItem from "@/components/friend-search/FriendResultItem";
 import { useAppSelector } from "@/lib/hooks";
 import LoadingData from "@/components/LoadingData";
 import ListConversation from "../navbar/ListConversation";
@@ -20,7 +20,7 @@ function ListFriend() {
                 </p>
               )}
               {userResultSearch.map((user) => (
-                <FriendItem key={user.id} user={user} />
+                <FriendResultItem key={user.id} user={user} />
               ))}
             </>
           )}

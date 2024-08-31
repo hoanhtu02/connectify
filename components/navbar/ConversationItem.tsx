@@ -1,30 +1,32 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Conversation } from "@prisma/client";
-import { Ellipsis, Pin, Users } from "lucide-react";
+import { ChatConversation } from "@prisma/client";
+import { Ellipsis, Pin } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { useAppSelector } from "@/lib/hooks";
 type ConversationItemProps = {
-  readonly conversation: Conversation & {
-    lastMessage?: { content: string; createdAt: Date };
-  };
+  readonly conversation: ChatConversation;
 };
 
 function ConversationItem({ conversation }: ConversationItemProps) {
+  const { user } = useAppSelector((state) => state.chat);
+  const friend = conversation.Participants.find(
+    (p) => p.User.id !== user?.id
+  )?.User;
+  const title = conversation.title ?? friend?.name;
   const conversationPhoto =
-    `https://ui-avatars.com/api/?background=random?text=` + conversation.title;
+    `https://ui-avatars.com/api/?background=random&name=` + title;
   return (
     <div className="hover:bg-slate-50  py-3 px-2 flex gap-6">
       <Link href="#" className="flex items-center  gap-4 flex-grow">
         <Avatar>
-          <AvatarImage src={conversationPhoto} alt={`@${conversation.title}`} />
-          <AvatarFallback>{conversation.title.toUpperCase()}</AvatarFallback>
+          <AvatarImage src={conversationPhoto} alt={`@${title}`} />
+          <AvatarFallback>{title?.toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1">
-          <p className=" font-semibold leading-none text-sm">
-            {conversation.title}
-          </p>
+          <p className=" font-semibold leading-none text-sm">{title}</p>
           <span className="text-sm leading-none text-gray-500 truncate max-w-60">
-            {conversation.lastMessage?.content ??
+            {conversation.Messages.at(0)?.content ??
               "No messages yet, click to start..."}
           </span>
         </div>

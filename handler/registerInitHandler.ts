@@ -1,69 +1,49 @@
 import { Server, Socket } from "socket.io";
 import { SocketEvent } from "@/enums";
-import { PrismaClient } from "@prisma/client";
+import { FriendStatus, PrismaClient } from "@prisma/client";
+import { getManyByUserId } from "@/handler/chat/getConversation";
 const userSelect = {
     id: true,
     name: true,
     email: true,
     image: true
 }
+const { INIT_STATE } = SocketEvent
 const prisma = new PrismaClient();
 
 async function registerInitHandler(server: Server, client: Socket) {
-    const [friends, requestsFromFriend] = await getFriends(client.user.id!);
-    const conversations = await prisma.conversation.findMany({
-        where: {
-            userId: client.user.id
-        },
-        include: {
-            Messages: {
-                select: {
-                    id: true,
-                    content: true,
-                    createdAt: true,
-                    updatedAt: true,
-                    User: {
-                        select: userSelect
-                    }
-                },
-                take: 10,
-                orderBy: {
-                    createdAt: "desc"
-                }
-            }
-        }
-    })
-    client.emit("initState", { friends, pendingAcceptFriends: requestsFromFriend.map(f => f.CurrentUser), conversations });
+    const { friends, friendRequestsReceived, friendRequestSenders } = await getFriends(client.user.id!);
+    const conversations = await getManyByUserId(client.user.id!);
+    client.emit(INIT_STATE, { friends, friendRequestsReceived, friendRequestSenders, conversations });
 }
 
 export default registerInitHandler
 
 //#region init friends, pending accept friends and request friends
 async function getFriends(userId: string) {
-    return await prisma.$transaction([
-        // get friends
-        prisma.friend.findMany({
-            where: {
-                userId,
-            },
-            include: {
-                Friend: {
-                    select: userSelect
+    const allFriends = await prisma.friend.findMany({
+        where: {
+            OR: [
+                {
+                    senderId: userId
                 },
-            }
-        }),
-        // get pending accept friends
-        prisma.friend.findMany({
-            where: {
-                friendId: userId,
-                status: FriendStatus.PENDING
+                {
+                    receiverId: userId
+                }
+            ],
+        },
+        include: {
+            Receiver: {
+                select: userSelect
             },
-            include: {
-                CurrentUser: {
-                    select: userSelect
-                },
+            Sender: {
+                select: userSelect
             }
-        }),
-    ])
+        }
+    })
+    const friends = allFriends.filter((f) => f.status === FriendStatus.ACCEPTED);
+    const friendRequestsReceived = allFriends.filter((f) => f.status === FriendStatus.PENDING && f.receiverId === userId);
+    const friendRequestSenders = allFriends.filter((f) => f.status === FriendStatus.PENDING && f.senderId === userId);
+    return { friends, friendRequestsReceived, friendRequestSenders };
 }
 // #endregion

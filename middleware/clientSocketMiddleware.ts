@@ -1,10 +1,16 @@
-import { initSocket, setSocketStatus } from "@/lib/features/chat/chatSlice";
-import { searchFriend, sendRequestFriend, receiveRequestFriend, setUserSearchResult, setUserFriend, responseRequestFriend } from "@/lib/features/user/userSlice";
+import { initSocket, setConversations, setSocketStatus } from "@/lib/features/chat/chatSlice";
+import { searchFriend, sendRequestFriend, setUserSearchResult, setUserFriend, responseRequestFriend, setFriendRequestsReceived, setFriendRequestSenders } from "@/lib/features/user/userSlice";
 import { RootState } from "@/lib/store";
 import { SocketEvent } from "@/enums";
 import { Middleware } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
-import { FriendStatus } from "@prisma/client";
+const { INIT_STATE,
+    USER_SEARCH_FRIEND,
+    SEARCH_FRIEND_RESULT,
+    SEND_REQUEST_FRIEND,
+    RECEIVE_REQUEST_FRIEND,
+    RESPONSE_REQUEST_FRIEND
+} = SocketEvent
 const socketMiddleware: Middleware<{}, RootState> = (store) => {
     let socket: Socket | null = null;
     return (next) => (action) => {
@@ -22,17 +28,40 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
                     store.dispatch(setSocketStatus("disconnected"));
                 });
 
-                socket.on("initState", ({ friends, pendingAcceptFriends }) => {
-                    console.log(friends, pendingAcceptFriends);
-                    const { acceptedFriends, friendRequestsReceived } = filterFriends(friends)
-                    store.dispatch(setUserFriend({ friends: acceptedFriends, friendRequestSenders: friendRequestsReceived, friendRequestsReceived: pendingAcceptFriends }));
+                socket.on(INIT_STATE, ({ friends, friendRequestsReceived, friendRequestSenders, conversations }) => {
+                    store.dispatch(setUserFriend(friends));
+                    store.dispatch(setFriendRequestsReceived(friendRequestsReceived));
+                    store.dispatch(setFriendRequestSenders(friendRequestSenders));
+                    store.dispatch(setConversations(conversations));
                 })
 
-                socket.on(SocketEvent.SEARCH_FRIEND_RESULT, (users) => {
+                socket.on(SEARCH_FRIEND_RESULT, (users) => {
                     store.dispatch(setUserSearchResult(users));
                 });
-                socket.on(SocketEvent.RECEIVE_REQUEST_FRIEND, (friend,) => {
-                    store.dispatch(receiveRequestFriend(friend));
+                socket.on(RECEIVE_REQUEST_FRIEND, (friend) => {
+                    const friends = store.getState().user.friendRequestsReceived;
+                    store.dispatch(setFriendRequestsReceived([...friends, friend]));
+                })
+                socket.on(SEND_REQUEST_FRIEND, (friend) => {
+                    const friends = store.getState().user.friendRequestSenders;
+                    store.dispatch(setFriendRequestSenders([...friends, friend]));
+                })
+                socket.on(RESPONSE_REQUEST_FRIEND, (isAccept, friend, conversation) => {
+                    const states = store.getState();
+                    const friends = states.user.friends;
+                    const conversations = states.chat.conversations;
+                    const friendRequestsReceived = states.user.friendRequestsReceived.filter((u) => u.id !== friend.id);
+                    const friendRequestSenders = states.user.friendRequestSenders.filter((u) => u.id !== friend.id);
+                    if (isAccept) {
+                        store.dispatch(setUserFriend([...friends, friend]));
+                        store.dispatch(setConversations([...conversations, conversation]));
+                    } else {
+                        store.dispatch(setUserFriend(friends.filter((u) => u.id !== friend.id)))
+                        // store.dispatch(setConversations(conversations.filter((c) => c.id !== conversation.id)))
+                    }
+                    // remove friend from queue request
+                    store.dispatch(setFriendRequestsReceived(friendRequestsReceived));
+                    store.dispatch(setFriendRequestSenders(friendRequestSenders));
                 })
                 socket.on("error", (error) => {
                     console.error(error);
@@ -40,25 +69,15 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
             }
         }
         if (searchFriend.match(action) && socket) {
-            socket.emit(SocketEvent.USER_SEARCH_FRIEND, action.payload);
+            socket.emit(USER_SEARCH_FRIEND, action.payload);
         }
         if (sendRequestFriend.match(action) && socket) {
-            socket.emit(SocketEvent.SEND_REQUEST_FRIEND, action.payload.id);
+            socket.emit(SEND_REQUEST_FRIEND, action.payload.id);
         }
         if (responseRequestFriend.match(action) && socket) {
-            socket.emit(SocketEvent.RESPONSE_REQUEST_FRIEND, action.payload);
+            socket.emit(RESPONSE_REQUEST_FRIEND, action.payload);
         }
         next(action);
     };
 };
 export default socketMiddleware;
-function filterFriends(friends: any) {
-    return friends.reduce((acc: any, { Friend, status }: any) => {
-        if (status === FriendStatus.ACCEPTED) {
-            acc.acceptedFriends.push(Friend);
-        } else if (status === FriendStatus.PENDING) {
-            acc.friendRequestsReceived.push(Friend);
-        }
-        return acc;
-    }, { acceptedFriends: [], friendRequestsReceived: [] });
-}

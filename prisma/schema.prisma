@@ -14,48 +14,44 @@ datasource db {
 }
 
 model User {
-  id                  String                @id @default(auto()) @map("_id") @db.ObjectId
-  name                String?
-  email               String?               @unique
-  emailVerified       DateTime?
-  image               String?
-  password            String?
-  accounts            Account[]
-  sessions            Session[]
+  id                   String                @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String?
+  email                String?               @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String?
+  accounts             Account[]
+  sessions             Session[]
   // Optional for WebAuthn support
-  Authenticator       Authenticator[]
-  phone               String?               @unique
-  isActive            Boolean               @default(true)
-  isReported          Boolean               @default(false)
-  isBlocked           Boolean               @default(false)
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  BlockList           BlockList[]
-  Participant         Participant[]
-  UserConversation    Conversation[]        @relation("UserConversation")
-  AdminConversation   Conversation[]        @relation("AdminConversation")
-  UserMessage         Message[]             @relation("UserMessage")
-  SenderMessage       Message[]             @relation("SenderMessage")
-  Message             Message[]
-  Conversation        Conversation[]
-  Report              Report[]
-  Activity            Activity[]
-  DeletedConversation DeletedConversation[]
-  DeletedMessage      DeletedMessage[]
-  Friends             Friend[]              @relation("CurrentUser")
-  FriendUsers         Friend[]              @relation("FriendUser")
-  Notifications       Notification[]
+  Authenticator        Authenticator[]
+  phone                String?
+  isActive             Boolean               @default(true)
+  isReported           Boolean               @default(false)
+  isBlocked            Boolean               @default(false)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  BlockList            BlockList[]
+  Participants         Participant[]
+  SenderMessages       Message[]
+  Conversations        Conversation[]
+  Reports              Report[]
+  Activities           Activity[]
+  DeletedConversations DeletedConversation[]
+  DeletedMessages      DeletedMessage[]
+  Friends              Friend[]              @relation("CurrentUser")
+  FriendUsers          Friend[]              @relation("FriendUser")
+  Notifications        Notification[]
 }
 
 model Friend {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String       @db.ObjectId
-  friendId    String       @db.ObjectId
-  createdAt   DateTime     @default(now())
-  status      FriendStatus @default(PENDING)
-  updatedAt   DateTime     @updatedAt
-  CurrentUser User         @relation("CurrentUser", fields: [userId], references: [id], onDelete: Cascade)
-  Friend      User         @relation("FriendUser", fields: [friendId], references: [id], onDelete: Cascade)
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  senderId   String       @db.ObjectId
+  receiverId String       @db.ObjectId
+  createdAt  DateTime     @default(now())
+  status     FriendStatus @default(PENDING)
+  updatedAt  DateTime     @updatedAt
+  Sender     User         @relation("CurrentUser", fields: [senderId], references: [id], onDelete: Cascade)
+  Receiver   User         @relation("FriendUser", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 enum FriendStatus {
@@ -149,15 +145,12 @@ model BlockList {
 // Conversations
 model Conversation {
   id                   String                @id @default(auto()) @map("_id") @db.ObjectId
-  title                String
-  adminId              String?               @db.ObjectId
+  title                String?
+  creatorId            String?               @db.ObjectId
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
-  userId               String?               @db.ObjectId
-  UserConversation     User?                 @relation("UserConversation", fields: [userId], references: [id], onDelete: Cascade)
-  AdminConversation    User?                 @relation("AdminConversation", fields: [adminId], references: [id], onDelete: Cascade)
+  Creator              User?                 @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   Messages             Message[]
-  User                 User?                 @relation(fields: [userId], references: [id])
   DeletedConversations DeletedConversation[]
   Participants         Participant[]
 }
@@ -184,13 +177,10 @@ model Message {
   content        String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
-  userId         String?     @db.ObjectId
 
   Attachments     Attachment[]
-  UserMessage     User?            @relation("UserMessage", fields: [userId], references: [id], onDelete: Cascade)
-  SenderMessage   User             @relation("SenderMessage", fields: [senderId], references: [id], onDelete: Cascade)
+  SenderMessage   User             @relation(fields: [senderId], references: [id], onDelete: Cascade)
   Conversation    Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  User            User?            @relation(fields: [userId], references: [id])
   DeletedMessages DeletedMessage[]
 }
 
