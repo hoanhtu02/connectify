@@ -34,7 +34,7 @@ async function getManyByUserId(id: string) {
                         select: userSelect
                     }
                 },
-                take: 10,
+                take: 1,
                 orderBy: {
                     createdAt: "desc"
                 }
@@ -62,12 +62,7 @@ async function getOneByUserId(id: string) {
         },
         include: {
             Messages: {
-                select: {
-                    id: true,
-                    content: true,
-                    messageType: true,
-                    createdAt: true,
-                    updatedAt: true,
+                include: {
                     Attachments: {
                         select: {
                             id: true,
@@ -79,7 +74,7 @@ async function getOneByUserId(id: string) {
                         select: userSelect
                     }
                 },
-                take: 10,
+                take: 1,
                 orderBy: {
                     createdAt: "desc"
                 }

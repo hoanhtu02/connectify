@@ -6,5 +6,7 @@ export enum SocketEvent {
     RECEIVE_REQUEST_FRIEND = "user:receive_request_friend",
     REMOVE_FRIEND = "user:remove-friend",
     RESPONSE_REQUEST_FRIEND = "user:response-request-friend",
-    MESSAGE_LOAD = "chat:message-load"
+    MESSAGE_LOAD = "chat:message-load",
+    MESSAGE_SEND = "chat:message-send",
+    MESSAGE_RECEIVE = "chat:message-receiver"
 } 

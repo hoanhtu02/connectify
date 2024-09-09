@@ -1,4 +1,4 @@
-import { initSocket, setConversations, setSocketStatus } from "@/lib/features/chat/chatSlice";
+import { initSocket, loadMessage, setConversations, setMessageConversation, setSelectedConversation, setSocketStatus } from "@/lib/features/chat/chatSlice";
 import { searchFriend, sendRequestFriend, setUserSearchResult, setUserFriend, responseRequestFriend, setFriendRequestsReceived, setFriendRequestSenders } from "@/lib/features/user/userSlice";
 import { RootState } from "@/lib/store";
 import { SocketEvent } from "@/enums";
@@ -9,7 +9,8 @@ const { INIT_STATE,
     SEARCH_FRIEND_RESULT,
     SEND_REQUEST_FRIEND,
     RECEIVE_REQUEST_FRIEND,
-    RESPONSE_REQUEST_FRIEND
+    RESPONSE_REQUEST_FRIEND,
+    MESSAGE_LOAD
 } = SocketEvent
 const socketMiddleware: Middleware<{}, RootState> = (store) => {
     let socket: Socket | null = null;
@@ -63,6 +64,9 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
                     store.dispatch(setFriendRequestsReceived(friendRequestsReceived));
                     store.dispatch(setFriendRequestSenders(friendRequestSenders));
                 })
+                socket.on(MESSAGE_LOAD, (conversationId, total, page, messages) => {
+                    store.dispatch(setMessageConversation({ conversationId, messages, total, page }))
+                })
                 socket.on("error", (error) => {
                     console.error(error);
                 });
@@ -76,6 +80,17 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
         }
         if (responseRequestFriend.match(action) && socket) {
             socket.emit(RESPONSE_REQUEST_FRIEND, action.payload);
+        }
+        if (setSelectedConversation.match(action) && socket) {
+            const { id, total, page } = action.payload
+            const cCached = store.getState().chat.cachedConversation.includes(id);
+            if (!cCached) {
+                socket.emit(MESSAGE_LOAD, id, total, page)
+            }
+        }
+        if (loadMessage.match(action) && socket) {
+            const { conversationId, total, page } = action.payload
+            socket.emit(MESSAGE_LOAD, conversationId, total, page)
         }
         next(action);
     };

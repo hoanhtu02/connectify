@@ -100,3 +100,11 @@
     transform: translateY(-5px);
   }
 }
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  bottom: 100% !important;
+  top: unset !important;
+  height: auto;
+}
+.ql-snow {
+  border: none !important;
+}

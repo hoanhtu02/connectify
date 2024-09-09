@@ -4,19 +4,16 @@ declare module "@prisma/client" {
     type ChatConversation = Prisma.ConversationGetPayload<{
         include: {
             Messages: {
-                select: {
-                    id: true;
-                    content: true;
-                    createdAt: true;
-                    updatedAt: true;
-                    User: {
+                include: {
+                    SenderMessage: {
                         select: {
                             id: true;
                             name: true;
                             email: true;
                             image: true;
                         }
-                    }
+                    },
+                    Attachments: true
                 }
             },
             Participants: {
@@ -31,6 +28,19 @@ declare module "@prisma/client" {
                     }
                 }
             }
+        }
+    }> & { total?: number; page?: number }
+    type ChatMessage = Prisma.MessageGetPayload<{
+        include: {
+            SenderMessage: {
+                select: {
+                    id: true;
+                    name: true;
+                    email: true;
+                    image: true;
+                }
+            },
+            Attachments: true
         }
     }>
 }

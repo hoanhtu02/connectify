@@ -1,48 +1,30 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import type { MessageType, Prisma } from "@prisma/client";
-type MessageUserSendPayload = Prisma.MessageGetPayload<{
-  include: {
-    Attachments: {
-      select: {
-        id: true;
-        url: true;
-        type: true;
-        fileUrl: true;
-        thumbUrl: true;
-      };
-    };
-    SenderMessage: {
-      select: {
-        id: true;
-        name: true;
-        image: true;
-      };
-    };
-  };
-}>;
-type AttachmentPerMessage = Prisma.AttachmentGetPayload<{
-  select: {
-    id: true;
-    url: true;
-    type: true;
-    fileUrl: true;
-    thumbUrl: true;
-  };
-}>;
+import type { ChatMessage, MessageType, Prisma } from "@prisma/client";
+import { useAppSelector } from "@/lib/hooks";
 
 type MessageItemProps = {
-  readonly message: MessageUserSendPayload;
-  readonly isCurrentUser: boolean;
+  readonly message: ChatMessage;
 };
-function MessageItem({ message, isCurrentUser }: MessageItemProps) {
+const css = {
+  left: {
+    container: "justify-start",
+    items: "flex-row",
+  },
+  right: {
+    container: "justify-end",
+    items: "flex-row-reverse",
+  },
+};
+function MessageItem({ message }: MessageItemProps) {
+  const { user } = useAppSelector((state) => state.chat);
+  const direction = message.senderId === user?.id ? "right" : "left";
+  const { container, items } = css[direction];
   const { image, name } = message.SenderMessage;
   const { content, createdAt, messageType } = message;
   return (
-    <div
-      className={`mb-4 flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
-    >
-      <div className={`flex items-end space-x-2 flex-row space-x`}>
+    <div className={`mb-4 flex ${container}`}>
+      <div className={`flex ${items} gap-2`}>
         <Avatar className="h-8 w-8">
           <AvatarImage src={image!} />
           <AvatarFallback>{name}</AvatarFallback>
@@ -53,7 +35,7 @@ function MessageItem({ message, isCurrentUser }: MessageItemProps) {
           <div>
             {renderBaseOnMessageType(
               messageType,
-              content || "",
+              content ?? "",
               message.Attachments
             )}
           </div>
@@ -69,25 +51,31 @@ function MessageItem({ message, isCurrentUser }: MessageItemProps) {
 function renderBaseOnMessageType(
   messageType: MessageType,
   content: string,
-  attachments: AttachmentPerMessage[]
+  attachments: ChatMessage["Attachments"]
 ) {
+  const isEmoji = content.match(/\p{Emoji}+/gu) && content.length === 2;
   switch (messageType) {
     case "TEXT":
-      const isEmoji = content.match(/\p{Emoji}+/gu) && content.length === 2;
       return <p className={isEmoji ? "text-2xl" : "text-sm"}>{content}</p>;
     case "IMAGE":
       return (
         <img
-          src={attachments[0].fileUrl}
+          src={
+            attachments[0]?.fileUrl ??
+            "https://ui-avatars.com/api/?background=random&name=Ho%20Tu&size"
+          }
           alt={content}
-          className="max-w-[80%] rounded-lg"
+          className="max-h-[250px] rounded-lg"
         />
       );
     case "FILE":
       return (
         <a
-          href={attachments[0].fileUrl}
-          download={content}
+          href={
+            attachments[0].fileUrl ||
+            "https://ui-avatars.com/api/?background=random&name=Ho%20Tu"
+          } 
+          download
           className="text-primary underline"
         >
           {content}

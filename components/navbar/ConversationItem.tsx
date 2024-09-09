@@ -3,7 +3,8 @@ import { ChatConversation } from "@prisma/client";
 import { Ellipsis, Pin } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { setSelectedConversation } from "@/lib/features/chat/chatSlice";
 type ConversationItemProps = {
   readonly conversation: ChatConversation;
 };
@@ -16,9 +17,14 @@ function ConversationItem({ conversation }: ConversationItemProps) {
   const title = conversation.title ?? friend?.name;
   const conversationPhoto =
     `https://ui-avatars.com/api/?background=random&name=` + title;
+
+  const dispatch = useAppDispatch();
   return (
     <div className="hover:bg-slate-50  py-3 px-2 flex gap-6">
-      <Link href="#" className="flex items-center  gap-4 flex-grow">
+      <div
+        className="flex items-center  gap-4 flex-grow cursor-pointer"
+        onClick={() => dispatch(setSelectedConversation(conversation))}
+      >
         <Avatar>
           <AvatarImage src={conversationPhoto} alt={`@${title}`} />
           <AvatarFallback>{title?.toUpperCase()}</AvatarFallback>
@@ -30,7 +36,7 @@ function ConversationItem({ conversation }: ConversationItemProps) {
               "No messages yet, click to start..."}
           </span>
         </div>
-      </Link>
+      </div>
       <div className="flex flex-col justify-between gap-1">
         <Button size="icon" className="w-6 h-6" variant="ghost">
           <Ellipsis size={12} className="cursor-pointer" />

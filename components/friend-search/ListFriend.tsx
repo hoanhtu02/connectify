@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FriendResultItem from "@/components/friend-search/FriendResultItem";
 import { useAppSelector } from "@/lib/hooks";
-import LoadingData from "@/components/LoadingData";
+import LoadingData from "@/components/loading/LoadingData";
 import ListConversation from "../navbar/ListConversation";
 
 function ListFriend() {
