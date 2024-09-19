@@ -19,7 +19,8 @@ function WelcomeBox() {
   }, []);
   return (
     <div className="h-full grid grid-rows-2">
-      <div className="relative bg-gradient-to-r from-blue-500 to-teal-400 flex items-center justify-center">
+      Welcome
+      {/* <div className="relative bg-gradient-to-r from-blue-500 to-teal-400 flex items-center justify-center">
         <div className="absolute inset-0 opacity-20">
           {bubbles.map(
             (bubble: CSSProperties | undefined, i: Key | null | undefined) => (
@@ -51,7 +52,7 @@ function WelcomeBox() {
           <MessageCircle className="mr-2 h-6 w-6" />
           Start the Conversation Now
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }

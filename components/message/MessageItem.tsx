@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import type { ChatMessage, MessageType, Prisma } from "@prisma/client";
@@ -29,19 +30,21 @@ function MessageItem({ message }: MessageItemProps) {
           <AvatarImage src={image!} />
           <AvatarFallback>{name}</AvatarFallback>
         </Avatar>
+        {/* <p className="text-xs mt-1 opacity-70">{format(createdAt, "HH:mm")}</p> */}
         <div
-          className={`max-w-[80%] bg-primary text-primary-foreground p-3 rounded-lg`}
+          className={`max-w-[60%] dark:bg-[#323337] drop-shadow-lg px-4 py-3 rounded-lg`}
         >
-          <div>
-            {renderBaseOnMessageType(
+          <div className="flex justify-start flex-wrap text-sm">
+            {/* {renderBaseOnMessageType(
               messageType,
               content ?? "",
               message.Attachments
-            )}
+            )} */}
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum
+            consectetur assumenda molestiae ratione magnam repellendus omnis
+            odio doloribus dicta amet, quidem ad itaque voluptatum obcaecati non
+            eveniet vitae est facere?
           </div>
-          <p className="text-xs mt-1 opacity-70">
-            {format(createdAt, "HH:mm")}
-          </p>
         </div>
       </div>
     </div>
@@ -54,27 +57,21 @@ function renderBaseOnMessageType(
   attachments: ChatMessage["Attachments"]
 ) {
   const isEmoji = content.match(/\p{Emoji}+/gu) && content.length === 2;
+  const imageGif = "";
+  const imageFile = "";
+  const imageVideo = "";
   switch (messageType) {
     case "TEXT":
       return <p className={isEmoji ? "text-2xl" : "text-sm"}>{content}</p>;
     case "IMAGE":
-      return (
-        <img
-          src={
-            attachments[0]?.fileUrl ??
-            "https://ui-avatars.com/api/?background=random&name=Ho%20Tu&size"
-          }
-          alt={content}
-          className="max-h-[250px] rounded-lg"
-        />
-      );
+      return <></>;
     case "FILE":
       return (
         <a
           href={
             attachments[0].fileUrl ||
             "https://ui-avatars.com/api/?background=random&name=Ho%20Tu"
-          } 
+          }
           download
           className="text-primary underline"
         >

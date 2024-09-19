@@ -1,5 +1,6 @@
+"use client";
 import HeaderChatBox from "@/components/chatbox/HeaderChatBox";
-import MainChatBox from "@/components/chatbox/MainChatBox";
+import MainChatBox from "@/components/chatbox/ListMessage";
 import InputChatBox from "@/components/chatbox/InputChatBox";
 import { useAppSelector } from "@/lib/hooks";
 import WelcomeBox from "@/components/WelcomeBox";

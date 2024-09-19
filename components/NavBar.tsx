@@ -1,43 +1,121 @@
-import HeaderNav from "@/components/navbar/HeaderNav";
-import ClassifyConversation from "@/components/navbar/ClassifyConversation";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useState } from "react";
-import TabConversations from "@/components/TabConversations";
-import TabRequestFriends from "@/components/TabRequestFriends";
-import TabFriends from "@/components/TabFriends";
+"use client";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import Logo from "@/components/Logo";
+import {
+  Archive,
+  MessageCircle,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+  ListTodo,
+  Calendar,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 function NavBar() {
-  const [activeTab, setActiveTab] = useState("chats");
+  const pathName = usePathname();
   return (
-    <section className="border-r">
-      <div className="bg-slate-50">
-        <HeaderNav />
+    <div className=" min-h-screen py-4 flex flex-col items-center pr-10 border-r dark:border-[#1F2121]">
+      <div className="flex flex-col gap-4">
+        <Logo />
+        <NavigationMenu>
+          <NavigationMenuList className="flex flex-col gap-2 items-center">
+            <NavigationMenuItem>
+              <Link href="/dashboard" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/dashboard"}
+                >
+                  <LayoutDashboard size={17} className="mr-2" />
+                  Dashboard
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/chat" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/chat"}
+                >
+                  <MessageCircle size={17} className="mr-2" />
+                  Conversations
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/friends" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/friends"}
+                >
+                  <Users size={17} className="mr-2" />
+                  Friends
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/todo" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/todo"}
+                >
+                  <ListTodo size={17} className="mr-2" />
+                  Todo
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/schedule" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/schedule"}
+                >
+                  <Calendar size={17} className="mr-2" />
+                  Schedule
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/archive" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/archive"}
+                >
+                  <Archive size={17} className="mr-2" />
+                  Archives
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/setting" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={pathName === "/setting"}
+                >
+                  <Settings size={17} className="mr-2" />
+                  Settings
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
-      <Tabs defaultValue="chats" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="justify-start w-full bg-slate-50">
-          <TabsTrigger value="chats">Chats</TabsTrigger>
-          <TabsTrigger value="friends">Friends</TabsTrigger>
-          <TabsTrigger value="request">Requests</TabsTrigger>
-          <ClassifyConversation />
-        </TabsList>
-        <TabsContent value="chats" forceMount hidden={activeTab !== "chats"}>
-          <TabConversations />
-        </TabsContent>
-        <TabsContent
-          value="friends"
-          forceMount
-          hidden={activeTab !== "friends"}
-        >
-          <TabFriends />
-        </TabsContent>
-        <TabsContent
-          value="request"
-          forceMount
-          hidden={activeTab !== "request"}
-        >
-          <TabRequestFriends />
-        </TabsContent>
-      </Tabs>
-    </section>
+      <div className="mt-auto mb-2">
+        <Button variant="ghost" size="sm" onClick={() => signOut()}>
+          <LogOut size={17} className="mr-2" />
+          Logout
+        </Button>
+      </div>
+    </div>
   );
 }
 

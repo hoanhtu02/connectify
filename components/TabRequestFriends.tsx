@@ -1,5 +1,5 @@
-import ListConversation from "@/components/navbar/ListConversation";
-import RequestFriendItem from "@/components/navbar/RequestFriendItem";
+import ListConversation from "@/components/nav-conversation/ListConversation";
+import RequestFriendItem from "@/components/nav-conversation/RequestFriendItem";
 import { useAppSelector } from "@/lib/hooks";
 
 function TabRequestFriends() {

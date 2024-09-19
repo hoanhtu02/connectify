@@ -4,6 +4,7 @@ import "./globals.css";
 import NextAuthSessionProvider from "@/components/next-auth/NextAuthSessionProvider";
 import { Toaster } from "@/components/ui/sonner";
 import StoreProvider from "./StoreProvider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,11 +24,18 @@ export default function RootLayout({
         suppressHydrationWarning
         className={inter.className + " relative min-h-screen"}
       >
-        <div>
-          <StoreProvider>
-            <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
-          </StoreProvider>
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div>
+            <StoreProvider>
+              <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+            </StoreProvider>
+          </div>
+        </ThemeProvider>
         <Toaster className="absolute top-4 right-4" />
       </body>
     </html>

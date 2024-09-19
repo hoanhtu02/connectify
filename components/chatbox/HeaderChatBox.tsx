@@ -6,7 +6,7 @@ import { useAppSelector } from "@/lib/hooks";
 function HeaderChatBox() {
   const { user } = useAppSelector((state) => state.chat);
   return (
-    <div className="flex gap-4 justify-between items-center px-4 py-3 bg-slate-100 border-b">
+    <div className="flex gap-4 justify-between items-center px-4 py-3  border-b">
       <div className="flex gap-4 items-center">
         <Avatar>
           <AvatarImage src={user?.image!} alt={`@${user?.name}`} />

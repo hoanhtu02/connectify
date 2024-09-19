@@ -1,3 +1,4 @@
+"use client";
 import { PencilLine } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import IconList from "@/components/chatbox/EmojiList";

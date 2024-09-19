@@ -1,7 +1,6 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ChatConversation } from "@prisma/client";
 import { Ellipsis, Pin } from "lucide-react";
-import Link from "next/link";
 import { Button } from "../ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setSelectedConversation } from "@/lib/features/chat/chatSlice";
@@ -20,8 +19,9 @@ function ConversationItem({ conversation }: ConversationItemProps) {
 
   const dispatch = useAppDispatch();
   return (
-    <div className="hover:bg-slate-50  py-3 px-2 flex gap-6">
-      <div
+    <div className="hover:bg-primary-foreground  px-2 py-1 flex gap-6">
+      <a
+        href={undefined}
         className="flex items-center  gap-4 flex-grow cursor-pointer"
         onClick={() => dispatch(setSelectedConversation(conversation))}
       >
@@ -31,12 +31,12 @@ function ConversationItem({ conversation }: ConversationItemProps) {
         </Avatar>
         <div className="flex flex-col gap-1">
           <p className=" font-semibold leading-none text-sm">{title}</p>
-          <span className="text-sm leading-none text-gray-500 truncate max-w-60">
+          <span className="text-sm leading-none text-primary opacity-60 truncate max-w-60">
             {conversation.Messages.at(0)?.content ??
               "No messages yet, click to start..."}
           </span>
         </div>
-      </div>
+      </a>
       <div className="flex flex-col justify-between gap-1">
         <Button size="icon" className="w-6 h-6" variant="ghost">
           <Ellipsis size={12} className="cursor-pointer" />

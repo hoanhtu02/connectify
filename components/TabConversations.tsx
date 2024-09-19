@@ -1,5 +1,5 @@
-import ConversationItem from "@/components/navbar/ConversationItem";
-import ListConversation from "@/components/navbar/ListConversation";
+import ConversationItem from "@/components/nav-conversation/ConversationItem";
+import ListConversation from "@/components/nav-conversation/ListConversation";
 import { useAppSelector } from "@/lib/hooks";
 
 function TabConversations() {

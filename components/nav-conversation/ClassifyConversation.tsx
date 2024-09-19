@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/popover";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AddFriendDialog from "@/components/navbar/AddFriendDialog";
+import AddFriendDialog from "@/components/nav-conversation/AddFriendDialog";
 
 function ClassifyConversation() {
   return (

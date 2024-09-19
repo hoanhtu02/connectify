@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { Search as SearchIcon } from "lucide-react";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -22,4 +23,29 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input };
+export type SearchProps = React.InputHTMLAttributes<HTMLInputElement>;
+
+const Search = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <label
+        className={cn(
+          "flex h-10 items-center rounded-md border border-input pl-3 text-sm bg-primary-foreground",
+          className
+        )}
+      >
+        <SearchIcon size={17} />
+        <input
+          {...props}
+          type="search"
+          ref={ref}
+          className="bg-primary-foreground w-full p-2 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        />
+      </label>
+    );
+  }
+);
+
+Search.displayName = "Search";
+
+export { Input, Search };

@@ -202,6 +202,7 @@ model Attachment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   messageId String   @db.ObjectId
   thumbUrl  String?
+  name      String?
   fileUrl   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

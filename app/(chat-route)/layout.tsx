@@ -1,4 +1,6 @@
-import ChatContainer from "@/components/ChatContainer";
+import NavBar from "@/components/NavBar";
+import ChatRouteContainer from "@/components/ChatRouteContainer";
+import TopBar from "@/components/TopBar";
 import { auth } from "@/auth";
 import SignInForm from "@/components/signin/SignInForm";
 import {
@@ -8,9 +10,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-async function Page() {
+type ChatRouteProps = {
+  readonly children: React.ReactNode;
+};
+export default async function ChatRouteLayout({ children }: ChatRouteProps) {
   const session = await auth();
-
   if (!session) {
     return (
       <Dialog open>
@@ -26,10 +30,12 @@ async function Page() {
     );
   }
   return (
-    <div className="min-h-screen flex">
-      <ChatContainer />
-    </div>
+    <section className="flex gap-4">
+      <NavBar />
+      <div className=" w-full flex flex-col ">
+        <TopBar />
+        <ChatRouteContainer>{children}</ChatRouteContainer>
+      </div>
+    </section>
   );
 }
-
-export default Page;

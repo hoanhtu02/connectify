@@ -1,5 +1,5 @@
 import FriendItem from "@/components/friend-search/FriendItem";
-import ListConversation from "@/components/navbar/ListConversation";
+import ListConversation from "@/components/nav-conversation/ListConversation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { responseRequestFriend } from "@/lib/features/user/userSlice";
@@ -39,9 +39,7 @@ function TabFriends() {
             );
           })
         ) : (
-          <p className="text-center text-sm text-gray-500">
-            You not have any friend
-          </p>
+          <p className="text-center text-sm">You not have any friend</p>
         )
       }
     />
