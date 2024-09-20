@@ -1,4 +1,4 @@
-import { initSocket, loadMessage, setConversations, setMessageConversation, setSelectedConversation, setSocketStatus } from "@/lib/features/chat/chatSlice";
+import { initSocket, loadMessage, setConversations, setMessageConversation, setSocketStatus } from "@/lib/features/chat/chatSlice";
 import { searchFriend, sendRequestFriend, setUserSearchResult, setUserFriend, responseRequestFriend, setFriendRequestsReceived, setFriendRequestSenders } from "@/lib/features/user/userSlice";
 import { RootState } from "@/lib/store";
 import { SocketEvent } from "@/enums";
@@ -58,9 +58,7 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
                         store.dispatch(setConversations([...conversations, conversation]));
                     } else {
                         store.dispatch(setUserFriend(friends.filter((u) => u.id !== friend.id)))
-                        // store.dispatch(setConversations(conversations.filter((c) => c.id !== conversation.id)))
                     }
-                    // remove friend from queue request
                     store.dispatch(setFriendRequestsReceived(friendRequestsReceived));
                     store.dispatch(setFriendRequestSenders(friendRequestSenders));
                 })
@@ -80,13 +78,6 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
         }
         if (responseRequestFriend.match(action) && socket) {
             socket.emit(RESPONSE_REQUEST_FRIEND, action.payload);
-        }
-        if (setSelectedConversation.match(action) && socket) {
-            const { id, total, page } = action.payload
-            const cCached = store.getState().chat.cachedConversation.includes(id);
-            if (!cCached) {
-                socket.emit(MESSAGE_LOAD, id, total, page)
-            }
         }
         if (loadMessage.match(action) && socket) {
             const { conversationId, total, page } = action.payload

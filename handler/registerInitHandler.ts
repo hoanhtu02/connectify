@@ -12,8 +12,10 @@ const { INIT_STATE } = SocketEvent
 const prisma = new PrismaClient();
 
 async function registerInitHandler(server: Server, client: Socket) {
-    const { friends, friendRequestsReceived, friendRequestSenders } = await getFriends(client.user.id!);
-    const conversations = await getManyByUserId(client.user.id!);
+    const [{ friends, friendRequestsReceived, friendRequestSenders }, conversations] = await Promise.all([
+        getFriends(client.user.id!),
+        getManyByUserId(client.user.id!)
+    ])
     client.emit(INIT_STATE, { friends, friendRequestsReceived, friendRequestSenders, conversations });
 }
 

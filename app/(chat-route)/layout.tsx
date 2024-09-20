@@ -30,7 +30,7 @@ export default async function ChatRouteLayout({ children }: ChatRouteProps) {
     );
   }
   return (
-    <section className="flex gap-4">
+    <section className="flex">
       <NavBar />
       <div className=" w-full flex flex-col ">
         <TopBar />

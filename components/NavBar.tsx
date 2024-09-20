@@ -33,7 +33,7 @@ function NavBar() {
               <Link href="/dashboard" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/dashboard"}
+                  active={pathName.includes("/dashboard")}
                 >
                   <LayoutDashboard size={17} className="mr-2" />
                   Dashboard
@@ -44,7 +44,7 @@ function NavBar() {
               <Link href="/chat" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/chat"}
+                  active={pathName.includes("/chat")}
                 >
                   <MessageCircle size={17} className="mr-2" />
                   Conversations
@@ -55,7 +55,7 @@ function NavBar() {
               <Link href="/friends" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/friends"}
+                  active={pathName.includes("/friends")}
                 >
                   <Users size={17} className="mr-2" />
                   Friends
@@ -66,7 +66,7 @@ function NavBar() {
               <Link href="/todo" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/todo"}
+                  active={pathName.includes("/todo")}
                 >
                   <ListTodo size={17} className="mr-2" />
                   Todo
@@ -77,7 +77,7 @@ function NavBar() {
               <Link href="/schedule" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/schedule"}
+                  active={pathName.includes("/schedule")}
                 >
                   <Calendar size={17} className="mr-2" />
                   Schedule
@@ -88,7 +88,7 @@ function NavBar() {
               <Link href="/archive" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/archive"}
+                  active={pathName.includes("/archive")}
                 >
                   <Archive size={17} className="mr-2" />
                   Archives
@@ -99,7 +99,7 @@ function NavBar() {
               <Link href="/setting" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
-                  active={pathName === "/setting"}
+                  active={pathName.includes("/setting")}
                 >
                   <Settings size={17} className="mr-2" />
                   Settings

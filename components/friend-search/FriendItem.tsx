@@ -11,7 +11,7 @@ const setting = {
     vertical: "flex flex-col items-center gap-4",
   },
   container: {
-    horizontal: "grid gap-4 p-2",
+    horizontal: "grid gap-4 p-4",
     vertical: "grid gap-4 py-8 px-2",
   },
   avatar: {

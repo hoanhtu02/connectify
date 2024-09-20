@@ -1,10 +1,5 @@
-import ChatContainer from "@/components/ChatContainer";
 function Page() {
-  return (
-    <div className="flex-grow flex-shrink">
-      <ChatContainer />
-    </div>
-  );
+  return <div>Select one conversation to start!</div>;
 }
 
 export default Page;

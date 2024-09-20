@@ -3,19 +3,29 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAppSelector } from "@/lib/hooks";
 import { Search } from "@/components/ui/input";
 import { Button } from "./ui/button";
-import { Bell } from "lucide-react";
+import { Bell, Group, UserPlus } from "lucide-react";
+import AddFriendDialog from "@/components/nav-conversation/AddFriendDialog";
 
 function TopBar() {
   const { user } = useAppSelector((state) => state.chat);
   return (
-    <div className="py-3 flex justify-around w-full h-fit">
-      <div></div>
+    <div className="py-3 px-4 flex w-full h-fit">
+      <div className="flex gap-2">
+        <AddFriendDialog>
+          <Button variant="outline" size="sm" className="px-2">
+            <UserPlus size={17} />
+          </Button>
+        </AddFriendDialog>
+        <Button variant="outline" size="sm" className="px-2">
+          <Group size={17} />
+        </Button>
+      </div>
       <Search
         type="text"
-        className="min-w-[350px]"
-        placeholder="Search conversations..."
+        className="min-w-[350px] mx-auto"
+        placeholder="Search..."
       />
-      <div className="flex gap-4 items-center ">
+      <div className="flex gap-4 items-center pr-4">
         <Button variant="ghost" size="sm" className="py-3 px-[.7rem] relative">
           <Bell size={17} />
           <div className="absolute top-0 right-0">

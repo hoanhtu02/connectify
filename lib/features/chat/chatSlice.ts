@@ -8,6 +8,7 @@ type ChatState = {
     loading: boolean;
     user: User | null;
     conversations: ChatConversation[];
+    loadingConversations: boolean;
     notification: Notification[];
     selectedConversation?: ChatConversation;
     cachedConversation: string[];
@@ -16,6 +17,7 @@ type ChatState = {
 const initialState: ChatState = {
     socketStatus: "disconnected",
     loading: false,
+    loadingConversations: true,
     user: null,
     conversations: [],
     notification: [],
@@ -37,15 +39,11 @@ const chatSlice = createSlice({
         },
         setConversations(state, action: PayloadAction<ChatConversation[]>) {
             state.conversations = action.payload;
+            state.loadingConversations = false
         },
-        setSelectedConversation(state, action: PayloadAction<ChatConversation>) {
-            if (state.selectedConversation?.id === action.payload.id) return
-            state.selectedConversation = action.payload
+        loadMessage(state, action: PayloadAction<{ conversationId: string; total?: number; page?: number }>) {
             state.loading = true
-        },
-        loadMessage(state, action: PayloadAction<{ conversationId: string; messages: ChatMessage, total: number; page: number }>) {
-            state.loading = true
-            state.cachedConversation.push(action.payload.conversationId)
+            // state.cachedConversation.push(action.payload.conversationId)
         },
         setMessageConversation(state, action: PayloadAction<{ conversationId: string; messages: ChatMessage, total: number; page: number }>) {
             const { conversationId, messages, total, page } = action.payload
@@ -60,7 +58,7 @@ const chatSlice = createSlice({
                 return c
             })
             if (conversation) state.selectedConversation = conversation;
-            state.cachedConversation.push(conversationId)
+            // state.cachedConversation.push(conversationId)
             state.loading = false
         },
         sendMessage(_state, _action: PayloadAction<Message>) { },
@@ -68,5 +66,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const { setSocketStatus, initSocket, notification, setConversations, setSelectedConversation, setMessageConversation, loadMessage } = chatSlice.actions;
+export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage } = chatSlice.actions;
 export default chatSlice.reducer;

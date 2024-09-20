@@ -11,7 +11,7 @@ function InputChatBox() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
   const dispatch = useAppDispatch();
   return (
-    <section className="border-t flex flex-col">
+    <section className="border-t flex flex-col p-2">
       <div className="flex border-b">
         <ToggleGroup type="multiple" size="sm" value={isUseEditor ? ["2"] : []}>
           <IconList />

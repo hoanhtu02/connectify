@@ -1,5 +1,6 @@
+"use client";
 import FriendItem from "@/components/friend-search/FriendItem";
-import ListConversation from "@/components/nav-conversation/ListConversation";
+import List from "@/components/nav-conversation/List";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { responseRequestFriend } from "@/lib/features/user/userSlice";
@@ -9,7 +10,7 @@ function TabFriends() {
   const { user } = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
   return (
-    <ListConversation
+    <List
       render={() =>
         friends.length > 0 ? (
           friends.map((f) => {

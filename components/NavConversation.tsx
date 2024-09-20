@@ -1,43 +1,28 @@
 "use client";
-import HeaderNav from "@/components/nav-conversation/HeaderNav";
-import ClassifyConversation from "@/components/nav-conversation/ClassifyConversation";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useState } from "react";
-import TabConversations from "@/components/TabConversations";
-import TabRequestFriends from "@/components/TabRequestFriends";
-import TabFriends from "@/components/TabFriends";
+import ConversationItem from "@/components/nav-conversation/ConversationItem";
+import List from "@/components/nav-conversation/List";
+import { useAppSelector } from "@/lib/hooks";
+import { Search } from "@/components/ui/input";
 function NavConversation() {
-  const [activeTab, setActiveTab] = useState("chats");
+  const { conversations } = useAppSelector((state) => state.chat);
   return (
-    <section className="border-r">
-      <div className="">
-        <HeaderNav />
+    <section className=" flex flex-col gap-4">
+      <div className="px-4">
+        <Search placeholder="Search conversations..." />
       </div>
-      <Tabs defaultValue="chats" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="justify-start w-full">
-          <TabsTrigger value="chats">Chats</TabsTrigger>
-          <TabsTrigger value="friends">Friends</TabsTrigger>
-          <TabsTrigger value="request">Requests</TabsTrigger>
-          <ClassifyConversation />
-        </TabsList>
-        <TabsContent value="chats" forceMount hidden={activeTab !== "chats"}>
-          <TabConversations />
-        </TabsContent>
-        <TabsContent
-          value="friends"
-          forceMount
-          hidden={activeTab !== "friends"}
-        >
-          <TabFriends />
-        </TabsContent>
-        <TabsContent
-          value="request"
-          forceMount
-          hidden={activeTab !== "request"}
-        >
-          <TabRequestFriends />
-        </TabsContent>
-      </Tabs>
+      <List
+        render={() =>
+          conversations.length > 0 ? (
+            conversations.map((c) => (
+              <ConversationItem key={c.id} conversation={c} />
+            ))
+          ) : (
+            <p className="text-center text-sm text-primary px-2 py-4">
+              No conversation found
+            </p>
+          )
+        }
+      />
     </section>
   );
 }

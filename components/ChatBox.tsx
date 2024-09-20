@@ -1,27 +1,18 @@
 "use client";
 import HeaderChatBox from "@/components/chatbox/HeaderChatBox";
-import MainChatBox from "@/components/chatbox/ListMessage";
+import ListMessage from "@/components/chatbox/ListMessage";
 import InputChatBox from "@/components/chatbox/InputChatBox";
 import { useAppSelector } from "@/lib/hooks";
 import WelcomeBox from "@/components/WelcomeBox";
-import LoadingData from "./loading/LoadingData";
 
 function ChatBox() {
-  const { selectedConversation, loading } = useAppSelector(
-    (state) => state.chat
-  );
+  const { selectedConversation } = useAppSelector((state) => state.chat);
   function renderConversation() {
-    if (loading)
-      return (
-        <div className="h-full flex items-center justify-center">
-          <LoadingData />
-        </div>
-      );
     if (selectedConversation)
       return (
         <>
           <HeaderChatBox />
-          <MainChatBox />
+          <ListMessage />
           <InputChatBox />
         </>
       );

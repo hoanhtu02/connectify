@@ -1,8 +1,8 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import FriendResultItem from "@/components/friend-search/FriendResultItem";
 import { useAppSelector } from "@/lib/hooks";
-import LoadingData from "@/components/loading/LoadingData";
-import ListConversation from "../nav-conversation/ListConversation";
+import LoadingData from "@/components/loading/Loading";
+import List from "../nav-conversation/List";
 
 function ListFriend() {
   const { userResultSearch, loading } = useAppSelector((state) => state.user);
@@ -11,7 +11,7 @@ function ListFriend() {
       {loading ? (
         <LoadingData />
       ) : (
-        <ListConversation
+        <List
           render={() => (
             <>
               {userResultSearch.length === 0 && (
