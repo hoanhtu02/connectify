@@ -10,8 +10,6 @@ type ChatState = {
     conversations: ChatConversation[];
     loadingConversations: boolean;
     notification: Notification[];
-    selectedConversation?: ChatConversation;
-    cachedConversation: string[];
     isTyping: boolean;
 };
 const initialState: ChatState = {
@@ -21,8 +19,7 @@ const initialState: ChatState = {
     user: null,
     conversations: [],
     notification: [],
-    cachedConversation: [],
-    isTyping: false
+    isTyping: false,
 }
 const chatSlice = createSlice({
     name: "chat",
@@ -43,7 +40,6 @@ const chatSlice = createSlice({
         },
         loadMessage(state, action: PayloadAction<{ conversationId: string; total?: number; page?: number }>) {
             state.loading = true
-            // state.cachedConversation.push(action.payload.conversationId)
         },
         setMessageConversation(state, action: PayloadAction<{ conversationId: string; messages: ChatMessage, total: number; page: number }>) {
             const { conversationId, messages, total, page } = action.payload
@@ -57,12 +53,10 @@ const chatSlice = createSlice({
                 conversation = c
                 return c
             })
-            if (conversation) state.selectedConversation = conversation;
-            // state.cachedConversation.push(conversationId)
             state.loading = false
         },
         sendMessage(_state, _action: PayloadAction<Message>) { },
-        updateStatusMessage(_state, _action: PayloadAction<Message>) { }
+        updateStatusMessage(_state, _action: PayloadAction<Message>) { },
     },
 });
 

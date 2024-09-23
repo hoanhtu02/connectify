@@ -41,6 +41,7 @@ model User {
   Friends              Friend[]              @relation("CurrentUser")
   FriendUsers          Friend[]              @relation("FriendUser")
   Notifications        Notification[]
+  Archive              Archive[]
 }
 
 model Friend {
@@ -182,6 +183,8 @@ model Message {
   SenderMessage   User             @relation(fields: [senderId], references: [id], onDelete: Cascade)
   Conversation    Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   DeletedMessages DeletedMessage[]
+  archiveIds      String[]         @db.ObjectId
+  Archives        Archive[]        @relation(fields: [archiveIds], references: [id])
 }
 
 enum MessageStatus {
@@ -198,11 +201,19 @@ enum MessageType {
   VIDEO
 }
 
+model Archive {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String    @db.ObjectId
+  User       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messageIds String[]  @db.ObjectId
+  Messages   Message[] @relation(fields: [messageIds], references: [id])
+}
+
 // Attachments for a message
 model Attachment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   messageId String   @db.ObjectId
-  thumbUrl  String?
+  cloudId   String?
   name      String?
   fileUrl   String
   createdAt DateTime @default(now())

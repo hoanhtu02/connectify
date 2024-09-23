@@ -1,18 +1,12 @@
 "use client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import OptionsChatBox from "@/components/chatbox/OptionsChatBox";
-import { useAppSelector } from "@/lib/hooks";
-import { useParams } from "next/navigation";
+import useParticipant from "@/hooks/useParticipant";
 
 function HeaderChatBox() {
-  const { user, conversations } = useAppSelector((state) => state.chat);
-  const { id }: { id: string } = useParams();
-  const selectedConversation = conversations.find((c) => c.id === id);
-  const friend = selectedConversation?.Participants.find(
-    (u) => u.User.id !== user?.id
-  )?.User;
+  const { friend } = useParticipant();
   return (
-    <div className="flex gap-4 justify-between items-center px-4 py-3  border-b">
+    <div className="flex gap-4 justify-between items-center px-4 py-2  border-b">
       <div className="flex gap-4 items-center">
         <Avatar>
           <AvatarImage src={friend?.image!} alt={`@${friend?.name}`} />

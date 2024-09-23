@@ -5,7 +5,7 @@ export default function ConversationLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="grid grid-cols-[370px_1fr] flex-grow h-full">
+    <section className="grid grid-cols-[370px_1fr] flex-grow h-full max-w-[1400px]">
       <NavFilterChat />
       <section className="flex flex-col">
         <div className="flex-grow flex-shrink flex flex-col">{children}</div>

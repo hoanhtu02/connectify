@@ -2,10 +2,10 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import type { ChatMessage } from "@prisma/client";
-import { useAppSelector } from "@/lib/hooks";
 import { Ellipsis, File, FileImage, FileVideo, Heart } from "lucide-react";
 import FilePreview from "@/components/message/FilePreview";
 import { Button } from "@/components/ui/button";
+import useParticipant from "@/hooks/useParticipant";
 
 type MessageItemProps = {
   readonly message: ChatMessage;
@@ -26,10 +26,9 @@ const css = {
   },
 };
 function MessageItem({ message }: MessageItemProps) {
-  const { user } = useAppSelector((state) => state.chat);
+  const { user, friend } = useParticipant();
   const direction = message.senderId === user?.id ? "right" : "left";
   const { container, items, classContent, icon } = css[direction];
-  const { image, name } = message.SenderMessage;
   const { content, createdAt, messageType, Attachments } = message;
   const isEmoji = content?.match(/\p{Emoji}+/gu) && content.length === 2;
 
@@ -50,8 +49,8 @@ function MessageItem({ message }: MessageItemProps) {
       <div className={`flex ${items} gap-2 max-w-[70%] items-center`}>
         {direction === "left" && (
           <Avatar className="h-8 w-8 self-start">
-            <AvatarImage src={image!} />
-            <AvatarFallback>{name}</AvatarFallback>
+            <AvatarImage src={friend?.image!} />
+            <AvatarFallback>{friend?.name}</AvatarFallback>
           </Avatar>
         )}
         <div

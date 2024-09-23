@@ -2,9 +2,10 @@
 import HeaderChatBox from "@/components/chatbox/HeaderChatBox";
 import ListMessage from "@/components/chatbox/ListMessage";
 import InputChatBox from "@/components/chatbox/InputChatBox";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import LoadingData from "@/components/loading/Loading";
 import { useParams } from "next/navigation";
+import { useLayoutEffect } from "react";
 export default function Page() {
   const { id }: { id: string } = useParams();
   const { conversations, loadingConversations } = useAppSelector(

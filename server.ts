@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import registerUserHandler from "@/handler/registerUserHandler";
 import { User } from "next-auth";
 import registerInitHandler from "@/handler/registerInitHandler";
-import registerChatHandler from "./handler/registerChatHandler";
+import registerChatHandler from "@/handler/registerChatHandler";
 process.on("unhandledRejection", (err) => {
     console.error(err);
     process.exit(1);

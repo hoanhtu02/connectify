@@ -2,14 +2,16 @@
 import { useQuill } from "react-quilljs";
 
 import "quill/dist/quill.snow.css";
-import { useLayoutEffect } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/lib/hooks";
 import Toolbar from "quill/modules/toolbar";
+import { FileUploadContext } from "./context/FileUploadProvider";
 
 function QuillEditor() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
+  const { uploads } = useContext(FileUploadContext);
   const { quill, quillRef } = useQuill({
     modules: {
       toolbar: "#toolbar",
