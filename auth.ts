@@ -1,4 +1,4 @@
-import NextAuth, { Session } from "next-auth"
+import NextAuth, { NextAuthConfig, Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GithubProvider from "next-auth/providers/github"
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -40,7 +40,7 @@ const providers: Provider[] = [
     })
 ]
 const adapter = PrismaAdapter(prisma)
-export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
+export const config: NextAuthConfig = {
     adapter: PrismaAdapter(prisma),
     providers,
     secret: process.env.AUTH_SECRET,
@@ -95,7 +95,8 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
             }
         },
     }
-})
+}
+export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth(config)
 
 export const providerMap = providers
     .map((provider) => {

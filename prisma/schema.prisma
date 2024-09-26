@@ -197,7 +197,6 @@ enum MessageType {
   TEXT
   IMAGE
   FILE
-  ARCHIVE
   VIDEO
 }
 
@@ -216,6 +215,7 @@ model Attachment {
   cloudId   String?
   name      String?
   fileUrl   String
+  mime      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)

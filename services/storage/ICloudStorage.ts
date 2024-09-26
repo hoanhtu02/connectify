@@ -1,8 +1,8 @@
+import { AxiosInstance } from "axios";
+
 export interface ICloudStorage {
-    url: string
-    uploadFile: (files: File[]) => Promise<{
-        name: string; id: string
-    }[]>;
+    axios: AxiosInstance
+    uploadFile: (files: FormData) => Promise<any>;
     getFile: (id: string) => Promise<File>;
     deleteFile: (id: string) => Promise<void>;
 }

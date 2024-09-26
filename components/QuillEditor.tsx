@@ -2,16 +2,19 @@
 import { useQuill } from "react-quilljs";
 
 import "quill/dist/quill.snow.css";
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Toolbar from "quill/modules/toolbar";
 import { FileUploadContext } from "./context/FileUploadProvider";
+import { sendMessage } from "@/lib/features/chat/chatSlice";
 
 function QuillEditor() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
-  const { uploads } = useContext(FileUploadContext);
+  const { uploads, setUploads } = useContext(FileUploadContext);
+  const dispatch = useAppDispatch();
+  //#region init quilljs
   const { quill, quillRef } = useQuill({
     modules: {
       toolbar: "#toolbar",
@@ -32,7 +35,13 @@ function QuillEditor() {
       });
     }
   }, [quill, isUseEditor]);
-
+  //#endregion
+  function clientSendMessage() {
+    // dispatch(sendMessage({
+    //   content,
+    //   messageType:
+    // }));
+  }
   return (
     <div className="w-full transition-all">
       <div ref={quillRef} />
@@ -55,7 +64,6 @@ function QuillEditor() {
           <option value="justify"></option>
         </select>
       </div>
-
       {isUseEditor ? (
         <Button size="sm" className="absolute bottom-2 right-2">
           <Send size={17} className="mr-2" />

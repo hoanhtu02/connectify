@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect, useContext } from "react";
+import { useRef, useEffect, useContext } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { X, Image as ImageIcon, Paperclip } from "lucide-react";
+import { X, Paperclip } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { getFileIcon } from "@/utils/mappingMimeType";

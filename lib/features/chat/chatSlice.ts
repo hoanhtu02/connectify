@@ -60,5 +60,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage } = chatSlice.actions;
+export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, sendMessage } = chatSlice.actions;
 export default chatSlice.reducer;
