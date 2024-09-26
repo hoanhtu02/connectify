@@ -31,7 +31,10 @@ export default function CompactMultiImageUploader() {
               clearInterval(interval);
               return { ...upload, status: "completed" };
             }
-            return { ...upload, progress: upload.progress + 10 };
+            return {
+              ...upload,
+              progress: upload.progress + Math.round(Math.random() * 20),
+            };
           }
           return upload;
         })
@@ -40,6 +43,7 @@ export default function CompactMultiImageUploader() {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (uploads.length >= 4) return;
     const files = event.target.files;
     if (files) {
       const newUploads = Array.from(files).map((file) => ({

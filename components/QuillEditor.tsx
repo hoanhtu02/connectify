@@ -64,17 +64,15 @@ function QuillEditor() {
           <option value="justify"></option>
         </select>
       </div>
-      {isUseEditor ? (
-        <Button size="sm" className="absolute bottom-2 right-2">
-          <Send size={17} className="mr-2" />
-          Send
-        </Button>
-      ) : (
-        <Button size="sm" className="absolute top-0 h-full right-0">
-          <Send size={17} className="mr-2" />
-          Send
-        </Button>
-      )}
+      <Button
+        size="sm"
+        className={`absolute ${
+          isUseEditor ? "bottom-2 right-2" : "top-0 h-full right-0"
+        }`}
+      >
+        <Send size={17} className="mr-2" />
+        Send
+      </Button>
     </div>
   );
 }
