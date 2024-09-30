@@ -39,7 +39,6 @@ function QuillEditor() {
   function clientSendMessage() {
     // dispatch(sendMessage({
     //   content,
-    //   messageType:
     // }));
   }
   return (
@@ -66,6 +65,7 @@ function QuillEditor() {
       </div>
       <Button
         size="sm"
+        onClick={clientSendMessage}
         className={`absolute ${
           isUseEditor ? "bottom-2 right-2" : "top-0 h-full right-0"
         }`}
