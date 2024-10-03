@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Toolbar from "quill/modules/toolbar";
 import { FileUploadContext } from "./context/FileUploadProvider";
-import { sendMessage } from "@/lib/features/chat/chatSlice";
+import { sendMessage, setSendingMessage } from "@/lib/features/chat/chatSlice";
+import { Message } from "@prisma/client";
+import { useParams } from "next/navigation";
 
 function QuillEditor() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
   const { uploads, setUploads } = useContext(FileUploadContext);
   const dispatch = useAppDispatch();
+  const { id } = useParams<{ id: string }>();
   //#region init quilljs
   const { quill, quillRef } = useQuill({
     modules: {
@@ -35,11 +38,18 @@ function QuillEditor() {
       });
     }
   }, [quill, isUseEditor]);
+  console.log(quillRef.current);
   //#endregion
   function clientSendMessage() {
-    // dispatch(sendMessage({
-    //   content,
-    // }));
+    // console.log(quill?.getText().length);
+    // console.log(quill?.getContents());
+    console.log(quill?.getSemanticHTML());
+
+    dispatch(setSendingMessage([{
+      content: quill?.getSemanticHTML(),
+      archiveIds: [],
+      
+    }]));
   }
   return (
     <div className="w-full transition-all">

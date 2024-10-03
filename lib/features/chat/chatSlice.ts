@@ -9,6 +9,7 @@ type ChatState = {
     user: User | null;
     conversations: ChatConversation[];
     loadingConversations: boolean;
+    messageSending: Message[];
     notification: Notification[];
     isTyping: boolean;
 };
@@ -17,6 +18,7 @@ const initialState: ChatState = {
     loading: false,
     loadingConversations: true,
     user: null,
+    messageSending: [],
     conversations: [],
     notification: [],
     isTyping: false,
@@ -38,7 +40,7 @@ const chatSlice = createSlice({
             state.conversations = action.payload;
             state.loadingConversations = false
         },
-        loadMessage(state, action: PayloadAction<{ conversationId: string; total?: number; page?: number }>) {
+        loadMessage(state, _action: PayloadAction<{ conversationId: string; total?: number; page?: number; }>) {
             state.loading = true
         },
         setMessageConversation(state, action: PayloadAction<{ conversationId: string; messages: ChatMessage, total: number; page: number }>) {
@@ -55,10 +57,11 @@ const chatSlice = createSlice({
             })
             state.loading = false
         },
+        setSendingMessage(_state, _action: PayloadAction<Omit<Message, "id" | "">[]>) { },
         sendMessage(_state, _action: PayloadAction<Message>) { },
         updateStatusMessage(_state, _action: PayloadAction<Message>) { },
     },
 });
 
-export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, sendMessage } = chatSlice.actions;
+export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, sendMessage, setSendingMessage } = chatSlice.actions;
 export default chatSlice.reducer;

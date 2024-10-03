@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 
 function ListMessage() {
   const { user, isTyping } = useAppSelector((state) => state.chat);
-  // const { id } = useParams;
+  // const { id } = useParams();
   // const dispatch = useAppDispatch();
   // useLayoutEffect(() => {
   //   dispatch(loadMessage({ conversationId: id }));
@@ -21,6 +21,7 @@ function ListMessage() {
       senderId: user?.id!,
       conversationId: "1234123",
       content: "this is a simple text",
+      archiveIds: [],
       messageType: "TEXT",
       SenderMessage: {
         id: user?.id!,
@@ -39,6 +40,7 @@ function ListMessage() {
       conversationId: "1234123",
       content: "this is a simple text ládfasdfasdfasdfasdfasdf",
       messageType: "TEXT",
+      archiveIds: [],
       SenderMessage: {
         id: user?.id!,
         name: user?.name!,
@@ -56,6 +58,7 @@ function ListMessage() {
       conversationId: "1234123",
       content: "this is a simple text",
       messageType: "IMAGE",
+      archiveIds: [],
       SenderMessage: {
         id: user?.id!,
         name: user?.name!,
