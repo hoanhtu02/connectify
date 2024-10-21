@@ -1,4 +1,4 @@
-import { FileUpload } from "@/components/context/FileUploadProvider";
+import { FileUpload } from "@/context/FileUploadProvider";
 import { Attachment } from "@prisma/client";
 import axios from "axios";
 import { useCallback, useState } from "react";

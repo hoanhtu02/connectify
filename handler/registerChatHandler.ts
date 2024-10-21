@@ -21,7 +21,7 @@ function registerChatHandler(_server: Server, client: Socket) {
                 conversationId
             },
             include: {
-                Attachments: true,
+                MessageAttachments: true,
                 SenderMessage: {
                     select: userSelect
                 }

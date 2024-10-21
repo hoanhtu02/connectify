@@ -7,10 +7,7 @@ import { X, Paperclip } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { getFileIcon } from "@/utils/mappingMimeType";
-import {
-  FileUpload,
-  FileUploadContext,
-} from "@/components/context/FileUploadProvider";
+import { FileUpload, FileUploadContext } from "@/context/FileUploadProvider";
 
 export default function CompactMultiImageUploader() {
   const { uploads, setUploads } = useContext(FileUploadContext);

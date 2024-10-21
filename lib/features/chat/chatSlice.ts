@@ -1,4 +1,4 @@
-import { Notification, ChatConversation, Message, ChatMessage } from "@prisma/client";
+import { Notification, ChatConversation, Message, ChatMessageItem } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "next-auth";
 
@@ -43,7 +43,7 @@ const chatSlice = createSlice({
         loadMessage(state, _action: PayloadAction<{ conversationId: string; total?: number; page?: number; }>) {
             state.loading = true
         },
-        setMessageConversation(state, action: PayloadAction<{ conversationId: string; messages: ChatMessage, total: number; page: number }>) {
+        setMessageConversation(state, action: PayloadAction<{ conversationId: string; messages: ChatMessageItem, total: number; page: number }>) {
             const { conversationId, messages, total, page } = action.payload
             let conversation: ChatConversation | null = null;
             state.conversations = state.conversations.map(c => {
@@ -57,11 +57,11 @@ const chatSlice = createSlice({
             })
             state.loading = false
         },
-        setSendingMessage(_state, _action: PayloadAction<Omit<Message, "id" | "">[]>) { },
+        processMessage(_state, _action: PayloadAction<Pick<ChatMessageItem, "conversationId" | "content" | "Attachments" | "senderId">[]>) { },
         sendMessage(_state, _action: PayloadAction<Message>) { },
         updateStatusMessage(_state, _action: PayloadAction<Message>) { },
     },
 });
 
-export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, sendMessage, setSendingMessage } = chatSlice.actions;
+export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, sendMessage, processMessage } = chatSlice.actions;
 export default chatSlice.reducer;

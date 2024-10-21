@@ -171,33 +171,27 @@ model Participant {
 
 // Messages for a conversation
 model Message {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  conversationId  String           @db.ObjectId
-  senderId        String           @db.ObjectId
-  messageType     MessageType
-  status          MessageStatus    @default(SENT)
-  content         String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  Attachments     Attachment[]
-  SenderMessage   User             @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  Conversation    Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  DeletedMessages DeletedMessage[]
-  archiveIds      String[]         @db.ObjectId
-  Archives        Archive[]        @relation(fields: [archiveIds], references: [id])
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId     String           @db.ObjectId
+  senderId           String           @db.ObjectId
+  status             MessageStatus    @default(SENT)
+  content            String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  attachments        String[]
+  MessageAttachments Attachment[]
+  SenderMessage      User             @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  Conversation       Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  DeletedMessages    DeletedMessage[]
+  archiveIds         String[]         @db.ObjectId
+  Archives           Archive[]        @relation(fields: [archiveIds], references: [id])
 }
 
 enum MessageStatus {
   RECEIVED
   SENT
   SEEN
-}
-
-enum MessageType {
-  TEXT
-  IMAGE
-  FILE
-  VIDEO
+  ERROR
 }
 
 model Archive {

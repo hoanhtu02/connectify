@@ -1,4 +1,4 @@
-import { initSocket, loadMessage, setConversations, setMessageConversation, setSocketStatus } from "@/lib/features/chat/chatSlice";
+import { initSocket, loadMessage, sendMessage, setConversations, setMessageConversation, setSocketStatus } from "@/lib/features/chat/chatSlice";
 import { searchFriend, sendRequestFriend, setUserSearchResult, setUserFriend, responseRequestFriend, setFriendRequestsReceived, setFriendRequestSenders } from "@/lib/features/user/userSlice";
 import { RootState } from "@/lib/store";
 import { SocketEvent } from "@/enums";
@@ -82,6 +82,9 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
         if (loadMessage.match(action) && socket) {
             const { conversationId, total, page } = action.payload
             socket.emit(MESSAGE_LOAD, conversationId, total, page)
+        }
+        if (sendMessage.match(action) && socket) {
+            const { conversationId } = action.payload
         }
         next(action);
     };

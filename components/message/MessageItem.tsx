@@ -1,14 +1,14 @@
 "use client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import type { ChatMessage } from "@prisma/client";
+import type { Message } from "@prisma/client";
 import { Ellipsis, File, FileImage, FileVideo, Heart } from "lucide-react";
 import FilePreview from "@/components/message/FilePreview";
 import { Button } from "@/components/ui/button";
 import useParticipant from "@/hooks/useParticipant";
 
 type MessageItemProps = {
-  readonly message: ChatMessage;
+  readonly message: Message;
 };
 const css = {
   left: {
@@ -29,20 +29,20 @@ function MessageItem({ message }: MessageItemProps) {
   const { user, friend } = useParticipant();
   const direction = message.senderId === user?.id ? "right" : "left";
   const { container, items, classContent, icon } = css[direction];
-  const { content, createdAt, messageType, Attachments } = message;
+  const { content, createdAt } = message;
   const isEmoji = content?.match(/\p{Emoji}+/gu) && content.length === 2;
 
   function renderBaseOnMessageType() {
-    switch (messageType) {
-      case "IMAGE":
-        return <FilePreview name="File name" size={20} icon={<FileImage />} />;
-      case "FILE":
-        return <FilePreview name="File name" size={20} icon={<File />} />;
-      case "VIDEO":
-        return <FilePreview name="File name" size={20} icon={<FileVideo />} />;
-      default:
-        return <></>;
-    }
+    // switch (messageType) {
+    //   case "IMAGE":
+    //     return <FilePreview name="File name" size={20} icon={<FileImage />} />;
+    //   case "FILE":
+    //     return <FilePreview name="File name" size={20} icon={<File />} />;
+    //   case "VIDEO":
+    //     return <FilePreview name="File name" size={20} icon={<FileVideo />} />;
+    //   default:
+    //     return <></>;
+    // }
   }
   return (
     <div className={`mb-6 flex ${container} group `}>
@@ -63,7 +63,7 @@ function MessageItem({ message }: MessageItemProps) {
           </div> */}
           <div className="text-sm leading-6 mb-2">
             <p className={`${isEmoji && "text-2xl"}`}>{content}</p>
-            {renderBaseOnMessageType()}
+            {/* {renderBaseOnMessageType()} */}
           </div>
           <p className="text-xs opacity-70">{format(createdAt, "HH:mm")}</p>
         </div>

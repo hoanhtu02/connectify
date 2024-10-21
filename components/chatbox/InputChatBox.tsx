@@ -6,7 +6,7 @@ import QuillEditor from "@/components/QuillEditor";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { toggleEditor } from "@/lib/features/setting/settingSlice";
 import MultiImageUploader from "@/components/chatbox/FileUpload";
-import FileUploadProvider from "@/components/context/FileUploadProvider";
+import FileUploadProvider from "@/context/FileUploadProvider";
 
 function InputChatBox() {
   const { isUseEditor } = useAppSelector((state) => state.setting);

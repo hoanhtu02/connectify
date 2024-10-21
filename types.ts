@@ -13,7 +13,7 @@ declare module "@prisma/client" {
                             image: true;
                         }
                     },
-                    Attachments: true
+                    MessageAttachments: true
                 }
             },
             Participants: {
@@ -30,7 +30,7 @@ declare module "@prisma/client" {
             }
         }
     }> & { total?: number; page?: number }
-    type ChatMessage = Prisma.MessageGetPayload<{
+    type ChatMessageItem = Prisma.MessageGetPayload<{
         include: {
             SenderMessage: {
                 select: {
@@ -40,7 +40,7 @@ declare module "@prisma/client" {
                     image: true;
                 }
             },
-            Attachments: true
+            MessageAttachments: true
         }
     }>
 }

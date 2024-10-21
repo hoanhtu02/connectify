@@ -7,9 +7,7 @@ import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Toolbar from "quill/modules/toolbar";
-import { FileUploadContext } from "./context/FileUploadProvider";
-import { sendMessage, setSendingMessage } from "@/lib/features/chat/chatSlice";
-import { Message } from "@prisma/client";
+import { FileUploadContext } from "@/context/FileUploadProvider";
 import { useParams } from "next/navigation";
 
 function QuillEditor() {
@@ -17,6 +15,7 @@ function QuillEditor() {
   const { uploads, setUploads } = useContext(FileUploadContext);
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
+  const { user } = useAppSelector((state) => state.chat);
   //#region init quilljs
   const { quill, quillRef } = useQuill({
     modules: {
@@ -38,18 +37,11 @@ function QuillEditor() {
       });
     }
   }, [quill, isUseEditor]);
-  console.log(quillRef.current);
   //#endregion
+
   function clientSendMessage() {
-    // console.log(quill?.getText().length);
     // console.log(quill?.getContents());
     console.log(quill?.getSemanticHTML());
-
-    dispatch(setSendingMessage([{
-      content: quill?.getSemanticHTML(),
-      archiveIds: [],
-      
-    }]));
   }
   return (
     <div className="w-full transition-all">
@@ -73,6 +65,7 @@ function QuillEditor() {
           <option value="justify"></option>
         </select>
       </div>
+
       <Button
         size="sm"
         onClick={clientSendMessage}
