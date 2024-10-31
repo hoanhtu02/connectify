@@ -144,7 +144,7 @@ export const getFileIcon = (fileType: string) => {
       return <FileType className="h-6 w-6" />;
     case FileCodeType.OTHER:
     default:
-      return <File className="h-6 w-6" />; // Bạn có thể trả về giá trị mặc định tại đây nếu không có loại tương ứng
+      return <File className="h-6 w-6" />;
   }
 };
 export default categorizeMimeType;

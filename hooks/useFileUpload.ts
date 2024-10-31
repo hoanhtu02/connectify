@@ -7,16 +7,26 @@ function useFileUpload() {
     const [progressUpload, setProgressUpload] = useState(0)
     const [totalSize, setTotalSize] = useState(0)
     const [fileLoaded, setFileLoaded] = useState(0)
-    const upload = useCallback(async (u: FileUpload) => {
+    const [status, setStatus] = useState<"uploading" | "completed" | "error">("uploading")
+
+    /**
+     * Upload file to server
+     * @param fileUpload FileUpload
+     * @returns Attachment
+     */
+    const upload: (fileUpload: FileUpload, messageId: string) => Promise<Attachment | undefined> = useCallback(async (fileUpload, messageId) => {
         try {
-            const urlUpload = "https://connectify.webtuhan.id.vn/wp-json/wp/v2/media"
+            const urlUpload = `${process.env.NEXT_PUBLIC_HOST_WP}/wp-json/wp/v2/media`
             const formData = new FormData();
-            formData.append("file", u.file);
-            formData.append("title", u.file.name);
+            formData.append("file", fileUpload.file);
+            formData.append("title", fileUpload.file.name);
+            // get token from server to auth with wp
             const {
                 data: { token },
+                status
             } = await axios.get("/api/resources");
             if (!token) return;
+            // upload file to wp
             const { data: {
                 source_url,
                 id,
@@ -40,17 +50,30 @@ function useFileUpload() {
                     },
                 }
             );
-            return {
+            if (status !== 200) {
+                setStatus("error")
+                throw new Error("Upload failed")
+            }
+            // create and get attachment in server
+            const { data: attachment } = await axios.post("/api/resources", JSON.stringify({
                 cloudId: id,
                 fileUrl: source_url,
                 name: raw,
                 mime: mime_type,
-            } as Attachment
+                messageId
+            }), {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            setStatus("completed")
+            return attachment
         } catch (error) {
             console.log("🚀 ~ upload ~ error:", error)
+            setStatus("error")
         }
     }, [])
-    return { upload, progressUpload, totalSize, fileLoaded } as const
+    return { upload, progressUpload, totalSize, fileLoaded, status } as const
 }
 
 export default useFileUpload

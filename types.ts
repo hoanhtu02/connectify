@@ -41,6 +41,8 @@ declare module "@prisma/client" {
                 }
             },
             MessageAttachments: true
+        } & {
+            file: File | null;
         }
     }>
 }

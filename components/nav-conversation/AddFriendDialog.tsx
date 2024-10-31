@@ -39,9 +39,7 @@ function AddFriendDialog({ children }: { readonly children: React.ReactNode }) {
               }, 400)}
             />
           </div>
-          <hr />
           <div className="flex flex-col gap-2">
-            <hr />
             <ListFriend />
           </div>
         </div>

@@ -7,7 +7,7 @@ import List from "../nav-conversation/List";
 function ListFriend() {
   const { userResultSearch, loading } = useAppSelector((state) => state.user);
   return (
-    <ScrollArea className="max-h-64 mt-2">
+    <ScrollArea className="max-h-64 my-4">
       {loading ? (
         <LoadingData />
       ) : (
@@ -15,7 +15,7 @@ function ListFriend() {
           render={() => (
             <>
               {userResultSearch.length === 0 && (
-                <p className="text-muted-foreground text-center">
+                <p className="text-muted-foreground text-center my-4">
                   No friend found
                 </p>
               )}

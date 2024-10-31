@@ -20,10 +20,9 @@ async function getManyByUserId(id: string) {
                 select: {
                     id: true,
                     content: true,
-                    messageType: true,
                     createdAt: true,
                     updatedAt: true,
-                    Attachments: true,
+                    MessageAttachments: true,
                     SenderMessage: {
                         select: userSelect
                     }
@@ -57,7 +56,7 @@ async function getOneByUserId(id: string) {
         include: {
             Messages: {
                 include: {
-                    Attachments: true,
+                    MessageAttachments: true,
                     SenderMessage: {
                         select: userSelect
                     }

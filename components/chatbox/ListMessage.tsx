@@ -17,7 +17,8 @@ function ListMessage() {
   // useLayoutEffect(() => {
   //   dispatch(loadMessage({ conversationId: id }));
   // }, []);
-  const data = conversations.find((c) => c.id === id)?.Messages;
+  const data = conversations.find((c) => c.id === id)
+    ?.Messages as ChatMessageItem[];
 
   return (
     <ScrollArea className="p-4 pb-2 flex-grow relative">
@@ -27,7 +28,7 @@ function ListMessage() {
         ))}
         {isTyping && (
           <div className="flex items-center absolute bottom-2 left-2">
-            <Avatar className="h-8 w-8">  
+            <Avatar className="h-8 w-8">
               <AvatarImage src={user?.image!} alt="Bot" />
               <AvatarFallback>B</AvatarFallback>
             </Avatar>
