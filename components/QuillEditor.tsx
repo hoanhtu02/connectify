@@ -9,6 +9,8 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Toolbar from "quill/modules/toolbar";
 import { FileUploadContext } from "@/context/FileUploadProvider";
 import { useParams } from "next/navigation";
+import type { Message, CreateChatMessage } from "@prisma/client";
+import { sendMessage } from "@/lib/features/chat/chatSlice";
 
 function QuillEditor() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
@@ -40,8 +42,18 @@ function QuillEditor() {
   //#endregion
 
   function clientSendMessage() {
-    // console.log(quill?.getContents());
     console.log(quill?.getSemanticHTML());
+    dispatch(
+      sendMessage({
+        content: quill?.getSemanticHTML() ?? "",
+        conversationId: id,
+        senderId: user?.id ?? "",
+        attachments: [],
+        file: uploads.map((u) => u.file) ?? [],
+        id: "",
+      })
+    );
+    quill?.setText("");
   }
   return (
     <div className="w-full transition-all">
@@ -65,7 +77,6 @@ function QuillEditor() {
           <option value="justify"></option>
         </select>
       </div>
-
       <Button
         size="sm"
         onClick={clientSendMessage}

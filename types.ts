@@ -1,17 +1,17 @@
 import { Prisma } from "@prisma/client";
-
+const userSelect = {
+    id: true,
+    name: true,
+    email: true,
+    image: true
+}
 declare module "@prisma/client" {
     type ChatConversation = Prisma.ConversationGetPayload<{
         include: {
             Messages: {
                 include: {
                     SenderMessage: {
-                        select: {
-                            id: true;
-                            name: true;
-                            email: true;
-                            image: true;
-                        }
+                        select: typeof userSelect
                     },
                     MessageAttachments: true
                 }
@@ -19,30 +19,33 @@ declare module "@prisma/client" {
             Participants: {
                 select: {
                     User: {
-                        select: {
-                            id: true;
-                            name: true;
-                            email: true;
-                            image: true;
-                        }
+                        select: typeof userSelect
                     }
                 }
             }
         }
     }> & { total?: number; page?: number }
+
     type ChatMessageItem = Prisma.MessageGetPayload<{
         include: {
             SenderMessage: {
-                select: {
-                    id: true;
-                    name: true;
-                    email: true;
-                    image: true;
-                }
+                select: typeof userSelect
             },
             MessageAttachments: true
-        } & {
-            file: File | null;
         }
-    }>
+    }> & {
+        file: File[];
+    }
+
+    type CreateChatMessage = Prisma.MessageGetPayload<{
+        select: {
+            conversationId: true,
+            content: true,
+            attachments: true,
+            senderId: true,
+            id: true
+        }
+    }> & {
+        file: File[];
+    }
 }

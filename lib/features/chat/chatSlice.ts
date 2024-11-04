@@ -1,4 +1,4 @@
-import { Notification, ChatConversation, Message, ChatMessageItem } from "@prisma/client";
+import { Notification, ChatConversation, Message, ChatMessageItem, CreateChatMessage } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "next-auth";
 
@@ -45,21 +45,26 @@ const chatSlice = createSlice({
         },
         setMessageConversation(state, action: PayloadAction<{ conversationId: string; messages: ChatMessageItem, total: number; page: number }>) {
             const { conversationId, messages, total, page } = action.payload
-            let conversation: ChatConversation | null = null;
             state.conversations = state.conversations.map(c => {
                 if (c.id === conversationId) {
                     c.Messages.push(messages)
                     c.total = total
                     c.page = page
                 }
-                conversation = c
                 return c
             })
             state.loading = false
         },
-        processMessage(_state, _action: PayloadAction<Pick<ChatMessageItem, "conversationId" | "content" | "Attachments" | "senderId">[]>) { },
-        sendMessage(_state, _action: PayloadAction<Message>) { },
-        updateStatusMessage(_state, _action: PayloadAction<Message>) { },
+        processMessage(_state, _action: PayloadAction<Pick<ChatMessageItem, "conversationId" | "content" | "attachments" | "senderId">[]>) { },
+        sendMessage(state, action: PayloadAction<CreateChatMessage>) {
+            state.conversations = state.conversations.map(c => {
+                if (c.id === action.payload.conversationId) {
+                    c.Messages.push(action.payload as ChatMessageItem)
+                }
+                return c
+            })
+        },
+        updateStatusMessage(_state, _action: PayloadAction<ChatMessageItem>) { },
     },
 });
 

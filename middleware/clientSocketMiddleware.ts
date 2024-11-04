@@ -78,9 +78,6 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
             const { conversationId, total, page } = action.payload
             socket.emit(MESSAGE_LOAD, conversationId, total, page)
         }
-        if (sendMessage.match(action) && socket) {
-            const { conversationId } = action.payload
-        }
         next(action);
     };
 };

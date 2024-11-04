@@ -4,7 +4,11 @@ import { useCallback } from "react"
 
 function useMessage(message: ChatMessageItem) {
     const createMessage = useCallback(async () => {
-        api.post("/api/chat/message", message)
+        try {
+            const { data } = await api.post("/api/chat/message", message)
+            return data
+        } catch (error) {
+        }
     }, [])
     const updateMessage = useCallback(async () => {
         api.patch("/api/chat/message", message)
