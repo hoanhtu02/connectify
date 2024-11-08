@@ -10,6 +10,13 @@ type ContextValueType = {
   setUploads: Dispatch<SetStateAction<FileUpload[]>>;
 };
 
+export interface FileUpload {
+  id: string;
+  file: File;
+  progress: number;
+  status: "uploading" | "completed" | "error";
+  preview: string | null;
+}
 const contextValue: ContextValueType = {
   uploads: [],
   setUploads: () => {},

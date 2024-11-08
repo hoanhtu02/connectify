@@ -3,14 +3,22 @@ import { getFileIcon } from "@/utils/mappingMimeType";
 import { Attachment } from "@prisma/client";
 import { Download, Eye } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useCallback, useState } from "react";
+import {
+  useEffect,
+  useCallback,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import LoadingData from "../loading/Loading";
 import { Progress } from "../ui/progress";
+import { FileUpload } from "@/context/FileUploadProvider";
 
 type FilePreviewProps = {
   attachment: Attachment | null;
   file: File | null;
   messageId: string;
+  setUploads?: Dispatch<SetStateAction<FileUpload[]>>;
 };
 
 function FilePreview({

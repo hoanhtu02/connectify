@@ -1,17 +1,8 @@
-import { Notification, ChatConversation, Message, ChatMessageItem, CreateChatMessage } from "@prisma/client";
+import { Notification, ChatConversation, ChatMessageItem, CreateChatMessage } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "next-auth";
 
 type SocketStatus = "disconnected" | "connected";
-export interface FileMetadata {
-    id: string;
-    name: string;
-    type: string;
-    size: number;
-    url: string;
-    uploaded: boolean;
-    status: "uploading" | "uploaded" | "failed"
-}
 type ChatState = {
     socketStatus: SocketStatus;
     loading: boolean;
@@ -20,7 +11,6 @@ type ChatState = {
     loadingConversations: boolean;
     notification: Notification[];
     isTyping: boolean;
-    uploads: FileMetadata[],
 };
 const initialState: ChatState = {
     socketStatus: "disconnected",
@@ -30,15 +20,11 @@ const initialState: ChatState = {
     conversations: [],
     notification: [],
     isTyping: false,
-    uploads: [],
 }
 const chatSlice = createSlice({
     name: "chat",
     initialState,
     reducers: {
-        setUploads(state, action: PayloadAction<FileMetadata[]>) {
-            state.uploads = action.payload;
-        },
         setSocketStatus(state, action: PayloadAction<SocketStatus>) {
             state.socketStatus = action.payload;
         },
@@ -70,15 +56,15 @@ const chatSlice = createSlice({
         receiveMessage(state, action: PayloadAction<ChatMessageItem>) {
             state.conversations.find(c => c.id === action.payload.conversationId)?.Messages.push(action.payload)
         },
-        submitMessage(state, action: PayloadAction<{ message: ChatMessageItem, files: File[] }>) {
+        submitMessage(state, action: PayloadAction<ChatMessageItem>) {
             state.conversations
-                .find(c => c.id === action.payload.message.conversationId)
-                ?.Messages.push(action.payload.message)
+                .find(c => c.id === action.payload.conversationId)
+                ?.Messages.push(action.payload)
         },
         sendMessage(_state, _action: PayloadAction<CreateChatMessage>) { },
         updateStatusMessage(_state, _action: PayloadAction<ChatMessageItem>) { },
     },
 });
 
-export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, submitMessage, receiveMessage, sendMessage, setUploads } = chatSlice.actions;
+export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, submitMessage, receiveMessage, sendMessage, } = chatSlice.actions;
 export default chatSlice.reducer;

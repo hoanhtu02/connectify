@@ -14,7 +14,7 @@ import useMessage from "@/hooks/useMessage";
 
 function QuillEditor() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
-  const { uploads, setUploads } = useContext(FileUploadContext);
+  const { uploads } = useContext(FileUploadContext);
   const dispatch = useAppDispatch();
   const { createMessage } = useMessage();
   const { id } = useParams<{ id: string }>();
@@ -53,13 +53,7 @@ function QuillEditor() {
       id: "",
     });
     if (!newMessage) return;
-    dispatch(
-      submitMessage({
-        message: newMessage,
-        files: uploads.map((f) => f.file),
-      })
-    );
-    setUploads([]);
+    dispatch(submitMessage(newMessage));
     quill?.setText("");
   }
   return (

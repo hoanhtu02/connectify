@@ -1,9 +1,5 @@
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
 import FormSignUpCre from "@/components/signup/FormSignUpCre";
 function Page() {

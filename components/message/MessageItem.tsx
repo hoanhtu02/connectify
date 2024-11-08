@@ -1,16 +1,16 @@
 "use client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { format } from "date-fns";
 import type { ChatMessageItem } from "@prisma/client";
 import { Ellipsis } from "lucide-react";
 import FilePreview from "@/components/message/FilePreview";
 import { Button } from "@/components/ui/button";
 import useParticipant from "@/hooks/useParticipant";
-import { useCallback, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import useMessage from "@/hooks/useMessage";
 import { v4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { sendMessage } from "@/lib/features/chat/chatSlice";
+import { FileUploadContext } from "@/context/FileUploadProvider";
 type MessageItemProps = {
   readonly message: ChatMessageItem;
 };
@@ -34,7 +34,8 @@ function MessageItem({ message }: MessageItemProps) {
   const friend = friends?.at(0) || null;
   const direction = message.senderId === user?.id ? "right" : "left";
   const { container, items, classContent } = css[direction];
-  const { content, files } = message;
+  const { content } = message;
+  const { uploads, setUploads } = useContext(FileUploadContext);
   const isEmoji = content?.match(/\p{Emoji}+/gu) && content.length === 2;
   // const dispatch = useAppDispatch();
   // useEffect(() => {
@@ -48,7 +49,7 @@ function MessageItem({ message }: MessageItemProps) {
   // }, []);
   const arrayAttachment = message.MessageAttachments?.length
     ? message.MessageAttachments
-    : files;
+    : uploads;
   return (
     <div className={`mb-6 flex ${container} group `}>
       <div className={`max-w-[70%]`}>
