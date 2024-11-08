@@ -34,7 +34,7 @@ declare module "@prisma/client" {
             MessageAttachments: true
         }
     }> & {
-        file: File[];
+        files: File[];
     }
 
     type CreateChatMessage = Prisma.MessageGetPayload<{
@@ -45,7 +45,5 @@ declare module "@prisma/client" {
             senderId: true,
             id: true
         }
-    }> & {
-        file: File[];
-    }
+    }>
 }

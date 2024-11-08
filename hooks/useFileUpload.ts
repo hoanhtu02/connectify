@@ -68,13 +68,14 @@ function useFileUpload() {
             // });
             // setStatus("completed")
             // return attachment
+            setProgressUpload(100)
             setStatus("completed")
             return {
                 id: "",
                 cloudId: "",
-                fileUrl: "",
-                name: "",
-                mime: "",
+                fileUrl: URL.createObjectURL(fileUpload),
+                name: fileUpload.name,
+                mime: fileUpload.type,
                 messageId: "",
                 createdAt: new Date(),
                 updatedAt: new Date(),

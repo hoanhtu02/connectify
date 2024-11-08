@@ -1,14 +1,16 @@
 "use client";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { redirect, RedirectType } from "next/navigation";
 import Link from "next/link";
-import { startTransition } from "react";
+import axios from "axios";
+import StepName from "@/components/signup/StepName";
+import StepEmail from "@/components/signup/StepEmail";
+import StepPassword from "./StepPassword";
+import { useLayoutEffect, useState } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 export const FormInput = z
   .object({
     name: z.string().min(3, { message: "Name is too short" }),
@@ -25,106 +27,65 @@ export const FormInput = z
       });
     }
   });
+
 function FormSignUpCre() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    trigger,
   } = useForm({
     resolver: zodResolver(FormInput),
   });
-
+  const [step, setStep] = useState(1);
   return (
     <form
       onSubmit={handleSubmit(async (data) => {
         try {
-          const response = await fetch("/api/signup", {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          const message = await response.text();
-          if (!response.ok) {
-            throw new Error(message);
-          }
-
-          if (!response)
+          const response = await axios.post("/api/signup", data);
+          if (response.status === 400)
             throw new Error("Failed to create account, something went wrong");
           toast.success("Account created successfully, wait for redirect");
-          setTimeout(() => startTransition(() => redirect("/signin")), 2000);
+          setTimeout(() => {
+            window.location.href = "/signin";
+          }, 2000);
         } catch (error: any) {
-          toast.error(error.message);
+          toast.error(error?.response?.data);
         }
       })}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-2"
     >
-      <div className="grid w-full items-center gap-y-6">
-        <div className="flex flex-col">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            {...register("name")}
-            className="mt-2"
-            placeholder="Your name"
-          />
-          {errors.name && (
-            <small className="text-destructive leading-none mt-1">
-              {errors.name.message?.toString()}
-            </small>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            {...register("email")}
-            className="mt-2"
-            placeholder="Your own email"
-          />
-          {errors.email && (
-            <small className="text-destructive leading-none mt-1">
-              {errors.email.message?.toString()}
-            </small>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <Label htmlFor="pass">Password</Label>
-          <Input
-            id="password"
-            {...register("password")}
-            type="password"
-            className="mt-2"
-            placeholder="Your password"
-          />
-          {errors.password && (
-            <small className="text-destructive leading-none mt-1">
-              {errors.password.message?.toString()}
-            </small>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <Label htmlFor="pass">Repeat password</Label>
-          <Input
-            id="repeatPassword"
-            {...register("repeatPassword")}
-            type="password"
-            className="mt-2"
-            placeholder="Repeat your password"
-          />
-          {errors.repeatPassword && (
-            <small className="text-destructive leading-none mt-1">
-              {errors.repeatPassword.message?.toString()}
-            </small>
-          )}
-        </div>
-        <Button type="submit" className="flex">
-          Sign up
-        </Button>
+      <div className="grid w-full items-center">
+        <StepName
+          {...{
+            errors,
+            show: step === 1,
+            register,
+            trigger,
+            setStep,
+          }}
+        />
+        <StepEmail
+          {...{
+            errors,
+            show: step === 2,
+            register,
+            setStep,
+            trigger,
+          }}
+        />
+        <StepPassword
+          {...{
+            errors,
+            show: step === 3,
+            register,
+            setStep,
+            trigger,
+          }}
+        />
       </div>
       <hr />
-      <p className="text-muted-foreground">
+      <p className="text-muted-foreground text-sm px-6 pt-2 pb-4">
         Already have an account?{" "}
         <Link href="/signin" className="hover:underline">
           Sign in now

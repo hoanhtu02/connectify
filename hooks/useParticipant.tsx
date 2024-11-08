@@ -5,10 +5,10 @@ function useParticipant() {
   const { user, conversations } = useAppSelector((state) => state.chat);
   const { id }: { id: string } = useParams();
   const selectedConversation = conversations.find((c) => c.id === id);
-  const friend = selectedConversation?.Participants.find(
+  const friends = selectedConversation?.Participants.filter(
     (u) => u.User.id !== user?.id
-  )?.User;
-  return { user, friend };
+  ).map((p) => p.User)!;
+  return { user, friends };
 }
 
 export default useParticipant;

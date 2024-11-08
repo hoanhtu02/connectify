@@ -1,7 +1,7 @@
 
 import { Server, Socket } from "socket.io";
 import { SocketEvent } from "@/enums";
-import { PrismaClient } from "@prisma/client";
+import { Message, PrismaClient } from "@prisma/client";
 const userSelect = {
     id: true,
     name: true,
@@ -32,23 +32,26 @@ function registerChatHandler(_server: Server, client: Socket) {
         // send back to client
         client.emit(MESSAGE_LOAD, conversationId, total, page, messages)
     })
-    client.on(MESSAGE_SEND, async (conversationId, messageType, content, attachment: File | null) => {
-        // if (attachment){
-        //     await prisma.attachment.create({
-        //         data: {
-        //             thumbUrl
-        //         }
-        //     })
-        // }
-    })
-    client.on(MESSAGE_RECEIVE, async (message) => {
-        // if (attachment){
-        //     await prisma.attachment.create({
-        //         data: {
-        //             thumbUrl
-        //         }
-        //     })
-        // }
+    client.on(MESSAGE_SEND, async (message: Message, to: string[]) => {
+        const newMessage = await prisma.message.findFirst({
+            where: {
+                id: message.id
+            }
+        })
+        if (!newMessage) return;
+        to.forEach((m) => {
+            if (m === message.senderId) return;
+            client.to(`notification:room:${m}`).emit(MESSAGE_RECEIVE, newMessage)
+        })
+        const updateStatus = await prisma.message.update({
+            where: {
+                id: newMessage.id
+            },
+            data: {
+                status: "SENT"
+            }
+        })
+        client.emit(MESSAGE_SEND, updateStatus)
     })
 }
 

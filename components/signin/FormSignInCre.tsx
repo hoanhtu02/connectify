@@ -11,6 +11,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import delay from "delay";
+import { AuthError } from "next-auth";
 const SignInInput = zod.object({
   email: zod
     .string({ required_error: "Email is required" })
@@ -32,9 +33,8 @@ function FormSignInCre() {
   const currentUrl = path === "/signin" ? "/" : path;
   const callbackUrl = useSearchParams().get("callbackUrl");
   const callbackWithoutOrigin = callbackUrl?.replace(/^https?:\/\/[^\/]+/, "");
-  const redirectUrl = callbackWithoutOrigin || currentUrl;
+  const redirectUrl = callbackWithoutOrigin ?? currentUrl;
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   return (
     <form
       onSubmit={handleSubmit(async ({ email, password }) => {
@@ -46,17 +46,17 @@ function FormSignInCre() {
             redirect: false,
           });
           if (response?.error) {
-            throw new Error(response.error);
+            throw new Error(response.code);
           }
           toast.success("Welcome back!, you are now signed in");
           await delay(2000);
           if (redirectUrl === window.location.pathname) {
-            router.refresh();
+            window.location.reload();
             return;
           }
-          router.push(redirectUrl);
-        } catch (error) {
-          toast.error("Something went wrong, we couldn't sign you in");
+          window.location.href = redirectUrl;
+        } catch (error: any) {
+          toast.error(error?.message);
         } finally {
           setLoading(false);
         }
@@ -81,6 +81,7 @@ function FormSignInCre() {
           <Label htmlFor="pass">Password</Label>
           <Input
             id="password"
+            type="password"
             {...register("password")}
             placeholder="Your password"
           />

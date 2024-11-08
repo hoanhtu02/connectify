@@ -122,29 +122,29 @@ export enum FileCodeType {
 
 export const getFileIcon = (fileType: string) => {
   const type = categorizeMimeType(fileType);
-  if (fileType.startsWith("image/")) return <ImageIcon className="h-6 w-6" />;
+  if (fileType.startsWith("image/")) return <ImageIcon className="h-8 w-8" />;
   switch (type) {
     case FileCodeType.PDF:
-      return <FaRegFilePdf className="h-6 w-6" />;
+      return <FaRegFilePdf className="h-8 w-8" />;
     case FileCodeType.JSON:
-      return <FileJson className="h-6 w-6" />;
+      return <FileJson className="h-8 w-8" />;
     case FileCodeType.CODE:
-      return <FileCode className="h-6 w-6" />;
+      return <FileCode className="h-8 w-8" />;
     case FileCodeType.ZIP:
-      return <FileArchive className="h-6 w-6" />;
+      return <FileArchive className="h-8 w-8" />;
     case FileCodeType.DOCS:
-      return <FileText className="h-6 w-6" />;
+      return <FileText className="h-8 w-8" />;
     case FileCodeType.VIDEO:
-      return <FileVideo className="h-6 w-6" />;
+      return <FileVideo className="h-8 w-8" />;
     case FileCodeType.AUDIO:
-      return <FileAudio className="h-6 w-6" />;
+      return <FileAudio className="h-8 w-8" />;
     case FileCodeType.BINARY:
-      return <FileDigit className="h-6 w-6" />;
+      return <FileDigit className="h-8 w-8" />;
     case FileCodeType.FONT:
-      return <FileType className="h-6 w-6" />;
+      return <FileType className="h-8 w-8" />;
     case FileCodeType.OTHER:
     default:
-      return <File className="h-6 w-6" />;
+      return <File className="h-8 w-8" />;
   }
 };
 export default categorizeMimeType;

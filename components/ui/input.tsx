@@ -1,7 +1,8 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Search as SearchIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Search as SearchIcon } from "lucide-react";
+import { Button } from "./button";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -21,6 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
+
 Input.displayName = "Input";
 
 export type SearchProps = React.InputHTMLAttributes<HTMLInputElement>;

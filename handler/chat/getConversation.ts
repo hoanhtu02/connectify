@@ -20,12 +20,10 @@ async function getManyByUserId(id: string) {
                 select: {
                     id: true,
                     content: true,
+                    senderId: true,
                     createdAt: true,
                     updatedAt: true,
                     MessageAttachments: true,
-                    SenderMessage: {
-                        select: userSelect
-                    }
                 },
                 take: 1,
                 orderBy: {

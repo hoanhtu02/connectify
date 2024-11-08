@@ -9,13 +9,14 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Toolbar from "quill/modules/toolbar";
 import { FileUploadContext } from "@/context/FileUploadProvider";
 import { useParams } from "next/navigation";
-import type { Message, CreateChatMessage } from "@prisma/client";
-import { sendMessage } from "@/lib/features/chat/chatSlice";
+import { submitMessage } from "@/lib/features/chat/chatSlice";
+import useMessage from "@/hooks/useMessage";
 
 function QuillEditor() {
   const { isUseEditor } = useAppSelector((state) => state.setting);
   const { uploads, setUploads } = useContext(FileUploadContext);
   const dispatch = useAppDispatch();
+  const { createMessage } = useMessage();
   const { id } = useParams<{ id: string }>();
   const { user } = useAppSelector((state) => state.chat);
   //#region init quilljs
@@ -41,18 +42,24 @@ function QuillEditor() {
   }, [quill, isUseEditor]);
   //#endregion
 
-  function clientSendMessage() {
-    console.log(quill?.getSemanticHTML());
+  async function clientSendMessage() {
+    const content = quill?.getText().trim() ? quill?.getSemanticHTML() : "";
+    if (!content && !uploads.length) return;
+    const newMessage = await createMessage({
+      content,
+      conversationId: id,
+      attachments: [],
+      senderId: user?.id ?? "",
+      id: "",
+    });
+    if (!newMessage) return;
     dispatch(
-      sendMessage({
-        content: quill?.getSemanticHTML() ?? "",
-        conversationId: id,
-        senderId: user?.id ?? "",
-        attachments: [],
-        file: uploads.map((u) => u.file) ?? [],
-        id: "",
+      submitMessage({
+        message: newMessage,
+        files: uploads.map((f) => f.file),
       })
     );
+    setUploads([]);
     quill?.setText("");
   }
   return (

@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthConfig, Session } from "next-auth"
+import NextAuth, { CredentialsSignin, NextAuthConfig, } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GithubProvider from "next-auth/providers/github"
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -7,7 +7,13 @@ import { Provider } from "next-auth/providers"
 import bcrypt from "bcryptjs"
 import { randomUUID } from "crypto"
 import { encode } from "next-auth/jwt"
-
+class CustomError extends CredentialsSignin {
+    code = "Something went wrong"
+    constructor(code?: string) {
+        super()
+        this.code = code ?? this.code
+    }
+}
 const prisma = new PrismaClient()
 const providers: Provider[] = [
     CredentialsProvider({
@@ -17,21 +23,16 @@ const providers: Provider[] = [
             password: { label: "Password", type: "password", placeholder: "password" },
         },
         async authorize({ email, password }) {
-            if (!email || !password) return null
+            if (!email || !password) throw new CustomError("Email and password are required")
             const user = await prisma.user.findUnique({
                 where: { email: email as string },
                 include: { accounts: true }
             })
-            if (user && bcrypt.compareSync(password as string, user.password!)) {
-
-                if (user.accounts[0].provider !== "credentials") {
-                    throw new Error(
-                        `Please sign in with ${user.accounts[0].provider}`
-                    );
-                }
+            if (!user) throw new CustomError("Invalid email or password")
+            if (user.password && bcrypt.compareSync(password as string, user.password)) {
                 return user
-            } else throw new Error("Invalid email or password")
-            return null
+            }
+            throw new CustomError("Invalid email or password")
         },
     }),
     GithubProvider({
@@ -71,8 +72,13 @@ export const config: NextAuthConfig = {
             }
 
             return token;
+        }, async signIn({ user, account, profile }) {
+            if (user) {
+                return true;
+            } else {
+                return false;
+            }
         },
-
         async session({ session, user, token }) {
             return {
                 ...session,

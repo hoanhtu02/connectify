@@ -31,9 +31,9 @@ export default function ChatRouteLayout({ children }: ChatRouteProps) {
   useLayoutEffect(() => {
     init();
   }, [dispatch]);
-  useReportWebVitals((metric) => {
-    console.log(metric);
-  });
+  // useReportWebVitals((metric) => {
+  //   console.log(metric);
+  // });
   if (!session) {
     return (
       <Dialog open>

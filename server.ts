@@ -31,7 +31,9 @@ app.prepare().then(async () => {
     io.on("connection", async (socket) => {
         console.log("a user connected");
         socket.join(`notification:room:${socket.user.id}`);
+
         await registerInitHandler(io, socket);
+
         // friend (add, remove, block, unblock)
         registerUserHandler(io, socket);
 

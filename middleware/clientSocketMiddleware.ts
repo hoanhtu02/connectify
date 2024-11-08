@@ -1,4 +1,4 @@
-import { initSocket, loadMessage, sendMessage, setConversations, setMessageConversation, setSocketStatus } from "@/lib/features/chat/chatSlice";
+import { initSocket, loadMessage, receiveMessage, sendMessage, setConversations, setMessageConversation, setSocketStatus, submitMessage } from "@/lib/features/chat/chatSlice";
 import { searchFriend, sendRequestFriend, setUserSearchResult, setUserFriend, responseRequestFriend, setFriendRequestsReceived, setFriendRequestSenders } from "@/lib/features/user/userSlice";
 import { RootState } from "@/lib/store";
 import { SocketEvent } from "@/enums";
@@ -12,7 +12,9 @@ const { INIT_STATE,
     SEND_REQUEST_FRIEND,
     RECEIVE_REQUEST_FRIEND,
     RESPONSE_REQUEST_FRIEND,
-    MESSAGE_LOAD
+    MESSAGE_LOAD,
+    MESSAGE_RECEIVE,
+    MESSAGE_SEND
 } = SocketEvent
 const socketMiddleware: Middleware<{}, RootState> = (store) => {
     let socket: Socket | null = null;
@@ -60,6 +62,12 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
                 socket.on(MESSAGE_LOAD, (conversationId, total, page, messages) => {
                     store.dispatch(setMessageConversation({ conversationId, messages, total, page }))
                 })
+                socket.on(MESSAGE_RECEIVE, (message) => {
+                    store.dispatch(receiveMessage(message));
+                });
+                socket.on(MESSAGE_SEND, (message) => {
+                    store.dispatch(receiveMessage(message));
+                });
                 socket.on("error", (error) => {
                     console.error(error);
                 });
@@ -78,6 +86,9 @@ const socketMiddleware: Middleware<{}, RootState> = (store) => {
             const { conversationId, total, page } = action.payload
             socket.emit(MESSAGE_LOAD, conversationId, total, page)
         }
+        // if (submitMessage.match(action) && socket) {
+        //     socket.emit(MESSAGE_SEND, action.payload.message, action.payload.to)
+        // }
         next(action);
     };
 };

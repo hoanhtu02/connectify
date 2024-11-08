@@ -1,5 +1,9 @@
 function Page() {
-  return <div>Select one conversation to start!</div>;
+  return (
+    <div className="h-full flex flex-col justify-center items-center">
+      <h1 className="text-center">Select any conversation to start!</h1>
+    </div>
+  );
 }
 
 export default Page;
