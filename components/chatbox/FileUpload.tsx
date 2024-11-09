@@ -7,7 +7,7 @@ import { X, Paperclip } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { getFileIcon } from "@/utils/mappingMimeType";
-import { FileUpload, FileUploadContext } from "@/context/FileUploadProvider";
+import { FileUploadContext } from "@/context/FileUploadProvider";
 
 export default function CompactMultiImageUploader() {
   const { uploads, setUploads } = useContext(FileUploadContext);
@@ -18,7 +18,6 @@ export default function CompactMultiImageUploader() {
         (upload) => upload?.preview && URL.revokeObjectURL(upload?.preview)
       );
   }, [uploads]);
-
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (uploads.length >= 4) return;
@@ -66,7 +65,7 @@ export default function CompactMultiImageUploader() {
           <Paperclip className="h-4 w-4" />
         </Button>
       </Label>
-      <ScrollArea className="flex items-center flex-1 w-10">
+      <ScrollArea className="flex items-center flex-1 w-10 select-none">
         <div className="flex gap-2 items-center justify-stretch flex-nowrap">
           {uploads.map((upload) => (
             <div

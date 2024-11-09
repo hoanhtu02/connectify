@@ -5,12 +5,13 @@ import { Ellipsis } from "lucide-react";
 import FilePreview from "@/components/message/FilePreview";
 import { Button } from "@/components/ui/button";
 import useParticipant from "@/hooks/useParticipant";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import useMessage from "@/hooks/useMessage";
 import { v4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { sendMessage } from "@/lib/features/chat/chatSlice";
-import { FileUploadContext } from "@/context/FileUploadProvider";
+import { FileUploadContext, FileUpload } from "@/context/FileUploadProvider";
+import { URL } from "url";
 type MessageItemProps = {
   readonly message: ChatMessageItem;
 };
@@ -36,20 +37,28 @@ function MessageItem({ message }: MessageItemProps) {
   const { container, items, classContent } = css[direction];
   const { content } = message;
   const { uploads, setUploads } = useContext(FileUploadContext);
+  const [messageUpload, setMessageUpload] = useState<FileUpload[]>(uploads);
   const isEmoji = content?.match(/\p{Emoji}+/gu) && content.length === 2;
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   if (message.id) return;
-  //   dispatch(
-  //     sendMessage({
-  //       message,
-  //       to: [...friends.map((f) => f.id)],
-  //     })
-  //   );
-  // }, []);
-  const arrayAttachment = message.MessageAttachments?.length
-    ? message.MessageAttachments
-    : uploads;
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (uploads.every((a) => a.status === "completed")) {
+      const newMessage = { ...message };
+      uploads.forEach((a) => {
+        newMessage.attachments?.push(a.attachmentId!);
+        newMessage.MessageAttachments?.push(a.Attachment!);
+      });
+      dispatch(
+        sendMessage({ message: newMessage, to: friends.map((a) => a.id) })
+      );
+      setUploads((prev) => {
+        prev.forEach((a) => {
+          URL.revokeObjectURL(a.preview!);
+        });
+        return [];
+      });
+    }
+  }, [messageUpload]);
   return (
     <div className={`mb-6 flex ${container} group `}>
       <div className={`max-w-[70%]`}>
@@ -80,27 +89,29 @@ function MessageItem({ message }: MessageItemProps) {
             </Button>
           </div>
         )}
-        {!!arrayAttachment?.length && (
+        {(!!uploads?.length || !!message?.MessageAttachments) && (
           <div
             className={`grid grid-cols-4 gap-1 max-w-fit ml-auto mt-2 ${classContent} bg-gradient-to-r px-4 py-3 rounded-b-lg rounded-tl-lg relative `}
           >
-            {arrayAttachment?.map((a, i) => {
-              return a instanceof File ? (
+            {uploads?.map((a, i) => {
+              return (
                 <FilePreview
                   key={v4()}
                   attachment={null}
                   file={a}
                   messageId={message.id || ""}
-                />
-              ) : (
-                <FilePreview
-                  key={v4()}
-                  attachment={a}
-                  messageId={message.id}
-                  file={null}
+                  setMessageUpload={setMessageUpload}
                 />
               );
             })}
+            {message?.MessageAttachments?.map((a, i) => (
+              <FilePreview
+                key={v4()}
+                attachment={a}
+                messageId={message.id}
+                file={null}
+              />
+            ))}
           </div>
         )}
       </div>

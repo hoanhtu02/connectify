@@ -1,12 +1,20 @@
+import { FileUploadContext } from "@/context/FileUploadProvider"
 import { api } from "@/utils/api"
 import { ChatMessageItem, CreateChatMessage } from "@prisma/client"
-import { useCallback } from "react"
+import { useCallback, useContext } from "react"
 
 function useMessage() {
+    const { setUploads } = useContext(FileUploadContext)
     const createMessage = useCallback(async (message: CreateChatMessage) => {
         try {
             const { data } = await api.post("/api/chat/message", message)
             if (!data) return null
+            setUploads((prev) =>
+                prev.map((a) => ({
+                    ...a,
+                    messageId: data.id,
+                }))
+            );
             return data as ChatMessageItem
         } catch (error) {
             console.error(error)

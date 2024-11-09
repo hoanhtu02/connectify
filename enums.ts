@@ -9,4 +9,5 @@ export enum SocketEvent {
     MESSAGE_LOAD = "chat:message-load",
     MESSAGE_SEND = "chat:message-send",
     MESSAGE_RECEIVE = "chat:message-receiver"
+    , MESSAGE_SUBMIT = "chat:message-submit"
 } 

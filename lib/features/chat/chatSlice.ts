@@ -11,6 +11,7 @@ type ChatState = {
     loadingConversations: boolean;
     notification: Notification[];
     isTyping: boolean;
+    messagePending: CreateChatMessage | null;
 };
 const initialState: ChatState = {
     socketStatus: "disconnected",
@@ -19,12 +20,15 @@ const initialState: ChatState = {
     user: null,
     conversations: [],
     notification: [],
-    isTyping: false,
+    isTyping: false, messagePending: null
 }
 const chatSlice = createSlice({
     name: "chat",
     initialState,
     reducers: {
+        setMessagePending(state, action: PayloadAction<CreateChatMessage>) {
+            state.messagePending = action.payload;
+        },
         setSocketStatus(state, action: PayloadAction<SocketStatus>) {
             state.socketStatus = action.payload;
         },
@@ -56,15 +60,17 @@ const chatSlice = createSlice({
         receiveMessage(state, action: PayloadAction<ChatMessageItem>) {
             state.conversations.find(c => c.id === action.payload.conversationId)?.Messages.push(action.payload)
         },
-        submitMessage(state, action: PayloadAction<ChatMessageItem>) {
+        submitMessage(_state, _action: PayloadAction<CreateChatMessage>) { },
+        setSubmitMessage(state, action: PayloadAction<ChatMessageItem>) {
             state.conversations
                 .find(c => c.id === action.payload.conversationId)
                 ?.Messages.push(action.payload)
+            state.messagePending = action.payload
         },
-        sendMessage(_state, _action: PayloadAction<CreateChatMessage>) { },
+        sendMessage(_state, _action: PayloadAction<{ message: CreateChatMessage, to: string[] }>) { },
         updateStatusMessage(_state, _action: PayloadAction<ChatMessageItem>) { },
     },
 });
 
-export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, submitMessage, receiveMessage, sendMessage, } = chatSlice.actions;
+export const { setSocketStatus, initSocket, notification, setConversations, setMessageConversation, loadMessage, submitMessage, receiveMessage, sendMessage, setMessagePending, setSubmitMessage } = chatSlice.actions;
 export default chatSlice.reducer;

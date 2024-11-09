@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { FileUpload } from "@/context/FileUploadProvider";
 const userSelect = {
     id: true,
     name: true,
@@ -33,7 +34,7 @@ declare module "@prisma/client" {
             },
             MessageAttachments: true
         }
-    }>
+    }> & { files?: FileUpload[] }
 
     type CreateChatMessage = Prisma.MessageGetPayload<{
         select: {

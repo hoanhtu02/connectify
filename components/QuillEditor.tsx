@@ -45,15 +45,15 @@ function QuillEditor() {
   async function clientSendMessage() {
     const content = quill?.getText().trim() ? quill?.getSemanticHTML() : "";
     if (!content && !uploads.length) return;
-    const newMessage = await createMessage({
-      content,
-      conversationId: id,
-      attachments: [],
-      senderId: user?.id ?? "",
-      id: "",
-    });
-    if (!newMessage) return;
-    dispatch(submitMessage(newMessage));
+    dispatch(
+      submitMessage({
+        content,
+        conversationId: id,
+        attachments: [],
+        senderId: user?.id!,
+        id: "",
+      })
+    );
     quill?.setText("");
   }
   return (

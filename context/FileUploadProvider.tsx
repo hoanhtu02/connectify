@@ -1,3 +1,5 @@
+"use client";
+import { Attachment } from "@prisma/client";
 import {
   createContext,
   Dispatch,
@@ -10,17 +12,21 @@ type ContextValueType = {
   setUploads: Dispatch<SetStateAction<FileUpload[]>>;
 };
 
-export interface FileUpload {
+export type FileUpload = {
   id: string;
+  messageId?: string;
   file: File;
+  attachmentId?: string;
+  Attachment?: Attachment;
   progress: number;
   status: "uploading" | "completed" | "error";
   preview: string | null;
-}
+};
 const contextValue: ContextValueType = {
   uploads: [],
   setUploads: () => {},
 };
+
 export const FileUploadContext = createContext(contextValue);
 
 function FileUploadProvider({ children }: any) {

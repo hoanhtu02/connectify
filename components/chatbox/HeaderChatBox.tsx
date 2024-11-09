@@ -4,7 +4,9 @@ import OptionsChatBox from "@/components/chatbox/OptionsChatBox";
 import useParticipant from "@/hooks/useParticipant";
 
 function HeaderChatBox() {
-  const { friend } = useParticipant();
+  const { friends } = useParticipant();
+  const friend = friends?.at(0) || null;
+  // TODO: Add friend online status and add image combine when conversation is group
   return (
     <div className="flex gap-4 justify-between items-center px-4 py-2  border-b">
       <div className="flex gap-4 items-center">
